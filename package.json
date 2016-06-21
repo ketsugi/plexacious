@@ -1,0 +1,23 @@
+{
+  "name": "plexacious",
+  "version": "1.0.0",
+  "description": "A library to facilitate talking to a Plex server via its web API.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+ssh://git@gitlab.com/ketsugi/plexacious.git"
+  },
+  "keywords": [
+    "plex",
+    "api"
+  ],
+  "author": "Joel Pan",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://gitlab.com/ketsugi/plexacious/issues"
+  },
+  "homepage": "https://gitlab.com/ketsugi/plexacious#README"
+}
