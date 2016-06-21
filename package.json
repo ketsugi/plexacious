@@ -19,5 +19,8 @@
   "bugs": {
     "url": "https://gitlab.com/ketsugi/plexacious/issues"
   },
-  "homepage": "https://gitlab.com/ketsugi/plexacious#README"
+  "homepage": "https://gitlab.com/ketsugi/plexacious#README",
+  "dependencies": {
+    "plex-api-headers": "^1.1.0"
+  }
 }
