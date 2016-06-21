@@ -4,7 +4,8 @@
   "description": "A library to facilitate talking to a Plex server via its web API.",
   "main": "index.js",
   "scripts": {
-    "test": "mocha"
+    "test": "mocha --compilers js:babel-register",
+    "test:watch": "mocha --compilers js:babel-register --watch"
   },
   "repository": {
     "type": "git",
@@ -24,7 +25,11 @@
     "plex-api-headers": "^1.1.0"
   },
   "devDependencies": {
+    "babel-preset-es2015-node6": "^0.2.0",
+    "babel-register": "^6.9.0",
     "chai": "^3.5.0",
-    "mocha": "^2.5.3"
+    "fast-async": "^6.0.22",
+    "mocha": "^2.5.3",
+    "mocha-clean": "^1.0.0"
   }
 }

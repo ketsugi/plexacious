@@ -1,0 +1,8 @@
+{
+  "plugins": [
+    "fast-async"
+  ],
+  "presets": [
+    "es2015-node6"
+  ]
+}
