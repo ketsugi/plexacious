@@ -4,7 +4,7 @@
   "description": "A library to facilitate talking to a Plex server via its web API.",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "mocha"
   },
   "repository": {
     "type": "git",
@@ -22,5 +22,9 @@
   "homepage": "https://gitlab.com/ketsugi/plexacious#README",
   "dependencies": {
     "plex-api-headers": "^1.1.0"
+  },
+  "devDependencies": {
+    "chai": "^3.5.0",
+    "mocha": "^2.5.3"
   }
 }
