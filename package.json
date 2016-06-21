@@ -22,7 +22,7 @@
   },
   "homepage": "https://gitlab.com/ketsugi/plexacious#README",
   "dependencies": {
-    "plex-api-headers": "^1.1.0"
+    "plex-api": "^3.5.0"
   },
   "devDependencies": {
     "babel-preset-es2015-node6": "^0.2.0",

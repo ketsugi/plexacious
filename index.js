@@ -1,19 +1,22 @@
-// Import the Plex API Headers library (https://www.npmjs.com/package/plex-api-headers)
-const plexHeaders = require('plex-api-headers');
-
-// Set defaults as constants
-const PLEX_SERVER_HOST = 'localhost';
-const PLEX_SERVER_PORT = 32400;
+// Import libraries
+const PlexAPI = require("plex-api");
 
 // Define the main class
 class Plexacious {
-  /**
-   * Instantiate Plexacious object
-   *
-   * @param {object} config - An object containing all the necessary configuration to connect to the Plex server
-   */
-  constructor(config = {}) {
+  constructor(opts = 'localhost') {
+    this.client = new PlexAPI(opts);
+  }
 
+  get sessions () {
+    return this.client.query('/status/sessions').then(response => response._children);
+  }
+
+  get servers () {
+    return this.client.query('/servers').then(response => response._children);
+  }
+
+  get onDeck() {
+    return this.client.query('/library/onDeck').then(response => response._children);
   }
 }
 
