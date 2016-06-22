@@ -1,28 +1,23 @@
 const { expect } = require('chai');
-const Plexacious = require('../');
-const plexConfig = {
-  hostname: 'macedonia.ketsugi.com',
-  token: 'ntjA6xHPg1puxkBBZjH5'
-};
+const Plexacious = require('../Plexacious');
+
+const plex = new Plexacious();
 
 describe('Plexacious:', () => {
-  describe('Class basics:', () => {
-    it('should instantiate a new Plexacious object', () => {
-      let p = new Plexacious();
-      expect(typeof p).to.equal('object');
-      expect(p.constructor.name).to.equal('Plexacious');
+  describe('Event attaching:', () => {
+    it('should instantiate with no events', () => {
+      expect(plex.events()).to.deep.equal({});
+      expect(typeof plex.events('test')).to.equal('undefined');
+    });
+
+    it('should attach a callback to an event', () => {
+      plex.on('test', () => {});
+      expect(Object.keys(plex.events()).length).to.equal(1);
+      expect(typeof plex.events('test')).to.equal('function');
     });
   });
 
-  describe('Macedonia tests:', () => {
-    let p = new Plexacious(plexConfig);
+  describe('Recently Added:', () => {
 
-    it('should retrieve the current sessions', async () => {
-      expect(Array.isArray(await p.sessions)).to.be.true;
-    });
-
-    it('should retrieve a list of servers', async () => {
-      expect(Array.isArray(await p.servers)).to.be.true;
-    })
-  })
+  });
 });
