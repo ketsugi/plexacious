@@ -1,6 +1,14 @@
 # plexacious
 [![Build Status](https://gitlab.com/ketsugi/plexacious/badges/master/build.svg)](https://gitlab.com/ketsugi/plexacious/builds/)
 
-A library to facilitate talking to a Plex server via its web API.
+A Plex notifier bot that can talk to different messaging platforms.
 
-To be completed...
+## Installation
+
+```
+npm install plexacious
+```
+
+```Javascript
+const bot = new Plexacious();
+```
