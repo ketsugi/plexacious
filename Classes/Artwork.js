@@ -1,5 +1,3 @@
-const http = require('http');
-
 class Artwork {
   constructor (artUri, plexClient) {
     this.uri = artUri;
