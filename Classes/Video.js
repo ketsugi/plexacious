@@ -2,7 +2,8 @@ const Artwork = require('./Artwork');
 
 class Video {
   constructor (videoObj, plexClient) {
-    this.addedAt = new Date (videoObj.addedAt);
+    console.log(videoObj);
+    this.addedAt = new Date (videoObj.addedAt * 1000);
     this.art = new Artwork (videoObj.art, plexClient);
     this.contentRating = videoObj.contentRating;
     this.duration = videoObj.duration;
@@ -16,7 +17,7 @@ class Video {
     this.guid = videoObj.guid;
     this.index = videoObj.index;
     this.key = videoObj.key;
-    this.lastViewedAt = new Date (videoObj.lastViewedAt);
+    //this.lastViewedAt = new Date (videoObj.lastViewedAt * 1000);
     this.originallyAvailableAt = new Date (videoObj.originallyAvailableAt);
     this.parent = {
       index: videoObj.parentIndex,
@@ -30,7 +31,7 @@ class Video {
     this.thumb = new Artwork (videoObj.thumb, plexClient);
     this.title = videoObj.title;
     this.type = videoObj.type;
-    this.updatedAt = new Date (videoObj.updatedAt);
+    this.updatedAt = new Date (videoObj.updatedAt * 1000);
     this.viewOffset = videoObj.viewOffset;
     this.year = parseInt(videoObj.year, 10);
   }
