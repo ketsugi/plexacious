@@ -6,7 +6,7 @@ const Video = require('./Classes/Video');
 
 // Import configuration
 const config = require('./config');
-const npmConfig = require('./package')
+const npmConfig = require('./package');
 
 // Define the main class
 class Plexacious {
@@ -15,17 +15,9 @@ class Plexacious {
       hostname: config.hostname,
       port: config.port,
       https: config.https,
-      username: config.username,
-      password: config.password,
       token: config.token,
-      options: {
-        identifier: "Plexacious Chat Bot",
-        product: "Plexacious",
-        version: npmConfig.version,
-        deviceName: "Plexacious",
-      }
     };
-    console.log(`Instantiating Plex API object to ${options.hostname}...`)
+    console.log(`Instantiating Plex API object to ${options.https ? 'https' : 'http'}://${options.hostname}:${options.port}...`)
     this.plex = new PlexAPI(options);
     this.refreshDuration = config.refreshDuration * 60 * 1000; // Convert from minutes to milliseconds
     this.hooks = {};
@@ -89,7 +81,7 @@ class Plexacious {
     // Iterate through the recently added media, and call the attached callback function (if any) on any media added since the last notification
     console.log('Looking for recently added media...');
     const recentlyAdded = await this.recentlyAdded;
-    for (const item of recentlyAdded) {
+    for (let item of recentlyAdded) {
       const media = await this.query(item.key);
     }
   }

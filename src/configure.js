@@ -8,6 +8,7 @@ const isIntegerish = require('is-integerish');
 
 // Import the configuration files
 const configFileName = './config.json';
+const npmConfig = require('./package');
 
 let currentConfig = {};
 try {
@@ -46,14 +47,7 @@ const questions = [
         return 'Please provide a valid number.';
       }
     },
-    filter: input => {
-      if (isIntegerish(input)) {
-        return parseInt(input, 10);
-      }
-      else {
-        return input;
-      }
-    },
+    filter: answer => filterInteger(answer),
   },
   {
     type: 'list',
@@ -110,14 +104,7 @@ const questions = [
         return 'Please provide a valid number.';
       }
     },
-    filter: input => {
-      if (isIntegerish(input)) {
-        return parseInt(input, 10);
-      }
-      else {
-        return input;
-      }
-    },
+    filter: answer => filterInteger(answer),
   },
 ];
 
@@ -127,8 +114,31 @@ inquirer.prompt(questions).then(answers => {
   if (answers.authenticationMethod === 'Plex.TV Login') {
     // Get the authentication token
     const options = {
-      hostname: 'https://plex.tv/users/sign_in.json',
+      protocol: 'https',
+      hostname: 'plex.tv',
+      path: `/users/sign_in.json?user[login]=${answers.username}&user[password]=${answers.password}`,
       method: 'POST',
+      headers: {
+        'Content-Type': 'application/x-www-form-urlencoded',
+        'Accepts': 'application/json',
+        'X-Plex-Client-Identifier': 'Plexacious Bot',
+        'X-Plex-Product': 'Plexacious',
+        'X-Plex-Version': npmConfig.version
+      },
     };
+
+
   }
 });
+
+/**
+ * Internal use functions
+ */
+function filterInteger (input) {
+  if (isIntegerish(input)) {
+    return parseInt(input, 10);
+  }
+  else {
+    return input;
+  }
+}
