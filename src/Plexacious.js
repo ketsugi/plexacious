@@ -5,8 +5,8 @@ const PlexAPI = require('plex-api');
 const Video = require('./Classes/Video');
 
 // Import configuration
-const config = require('./config');
-const npmConfig = require('./package');
+const config = require('../config');
+const npmConfig = require('../package');
 
 // Define the main class
 class Plexacious {
