@@ -4,9 +4,12 @@
   "description": "A library to facilitate talking to a Plex server via its web API.",
   "main": "Plexacious.js",
   "scripts": {
-    "postinstall": "npm configure",
-    "test": "mocha --compilers js:babel-register",
-    "test:watch": "mocha --compilers js:babel-register --watch"
+    "build": "node node_modules/gulp/bin/gulp babelify",
+    "build:watch": "node node_modules/gulp/bin/gulp",
+    "configure": "node lib/configure",
+    "postinstall": "npm run build",
+    "test": "node node_modules/mocha/bin/mocha --compilers js:babel-register",
+    "test:watch": "node node_modules/mocha/bin/mocha --compilers js:babel-register --watch"
   },
   "repository": {
     "type": "git",
