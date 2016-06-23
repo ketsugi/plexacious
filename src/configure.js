@@ -7,12 +7,12 @@ const jsonfile = require('jsonfile');
 const isIntegerish = require('is-integerish');
 
 // Import the configuration files
-const configFileName = './config.json';
-const npmConfig = require('./package');
+const configFileName = '../config.json';
+var npmConfig = require('../package');
 
 let currentConfig = {};
 try {
-  currentConfig = jsonfile.readFileSync(configFileName);
+  currentConfig = require(configFileName);
 }
 catch (e) {
   currentConfig = {};
@@ -87,6 +87,13 @@ const questions = [
   },
   {
     type: 'input',
+    name: 'clientName',
+    message: 'Please enter a name for this bot:',
+    default: 'Plexacious Bot',
+    when: answers => answers.authenticationMethod == 'Plex.TV Login',
+  },
+  {
+    type: 'input',
     name: 'refreshDuration',
     message: 'Please enter the desired refresh duration in minutes:',
     default: currentConfig.refreshDuration || 5,
@@ -108,27 +115,28 @@ const questions = [
   },
 ];
 
-inquirer.prompt(questions).then(answers => {
-  console.dir(answers);
-
+inquirer.prompt(questions).then(async (answers) => {
   if (answers.authenticationMethod === 'Plex.TV Login') {
-    // Get the authentication token
-    const options = {
-      protocol: 'https',
-      hostname: 'plex.tv',
-      path: `/users/sign_in.json?user[login]=${answers.username}&user[password]=${answers.password}`,
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/x-www-form-urlencoded',
-        'Accepts': 'application/json',
-        'X-Plex-Client-Identifier': 'Plexacious Bot',
-        'X-Plex-Product': 'Plexacious',
-        'X-Plex-Version': npmConfig.version
-      },
-    };
-
-
+    console.log('Getting authentication token from Plex.TV...');
+    answers.token = await getAuthToken(answers.username, answers.password);
   }
+
+  currentConfig = {
+    hostname: answers.hostname,
+    port: answers.port,
+    https: answers.https,
+    token: answers.token,
+    refreshDuration: answers.refreshDuration,
+  };
+
+  jsonfile.writeFile('config.json', currentConfig, {spaces: 2}, err => {
+    if (err) {
+      throw err;
+    }
+    else {
+      console.log('Successfully saved to configuration file.');
+    }
+  });
 });
 
 /**
@@ -141,4 +149,42 @@ function filterInteger (input) {
   else {
     return input;
   }
+}
+
+function getAuthToken (username, password) {
+  return new Promise((resolve, reject) => {
+    const options = {
+      hostname: 'plex.tv',
+      path: `/users/sign_in.json?user[login]=${username}&user[password]=${password}`,
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/x-www-form-urlencoded',
+        'Accepts': 'application/json',
+        'X-Plex-Client-Identifier': 'Plexacious Bot',
+        'X-Plex-Product': 'Plexacious',
+        'X-Plex-Version': npmConfig.version
+      },
+    };
+
+    const request = https.request(options, response => {
+      if (response.statusCode !== 201) {
+        reject(new Error('Failed to get token from Plex.TV'));
+      }
+
+      const body = [];
+      response.on('data', chunk => body.push(chunk));
+      response.on('end', () => {
+        const data = JSON.parse(body.join(''));
+
+        if (data.user && data.user.authentication_token) {
+          resolve(data.user.authentication_token);
+        }
+        else {
+          reject(new Error('Authentication token not found in response.'));
+        }
+      });
+    });
+    request.end();
+    request.on('error', e => reject(e));
+  });
 }
