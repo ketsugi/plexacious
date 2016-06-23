@@ -26,7 +26,7 @@ class Plexacious {
 
     // Start the digest
     this.setRefreshDuration(config.refreshDuration);
-    this._digest();
+    this._digest(true);
   }
 
   /***********************
@@ -76,7 +76,7 @@ class Plexacious {
    * @param {string} event - If provided, specifies the event to get the callback function for. Will return undefined if this event has no callback attached.
    * @return {Array|function}
    */
-  events (event) {
+  eventFunctions (event) {
     if (event) return this.hooks[event];
     else return this.hooks;
   }
@@ -91,12 +91,13 @@ class Plexacious {
    * The digest function which is run on an interval specified by the refreshDuration setting.
    *
    * It will check what's going on with the server periodically, pulling data from it and then calling the attached callback functions if any.
+   *
+   * If init is passed as true, (ie the first time the digest is run when the bot starts up), event hooks will not be triggered.
    */
-  async _digest () {
+  async _digest (init = false) {
     console.log('Starting digest...');
 
     // Iterate through the recently added media in each section, and call the attached callback function (if any) on any media added since the last digest
-
     let recentlyAdded = [];
 
     for (let section of await this.getSections()) {
@@ -104,7 +105,7 @@ class Plexacious {
 
       for (let item of await this.getRecentlyAdded(section.key)) {
         if (!(item.ratingKey in this.cache.recentlyAdded)) { // Check if it's a new item that we haven't already seen
-          if (this.hooks['mediaAdded']) { // Check if there's a callback attached
+          if (!init && this.hooks['mediaAdded']) { // Check if there's a callback attached
             this.hooks['mediaAdded'](item);
           }
         }
