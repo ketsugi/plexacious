@@ -4,13 +4,9 @@ const PlexAPI = require('plex-api');
 // Import classes
 const Video = require('./Classes/Video');
 
-// Import configuration
-const config = require('../config');
-const npmConfig = require('../package');
-
 // Define the main class
 class Plexacious {
-  constructor() {
+  constructor(config) {
     const options = {
       hostname: config.hostname,
       port: config.port,

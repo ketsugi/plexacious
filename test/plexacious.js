@@ -1,7 +1,8 @@
 const { expect } = require('chai');
+const config = require('../config');
 const Plexacious = require('../lib/Plexacious');
 
-const plex = new Plexacious();
+const plex = new Plexacious(config);
 
 describe('Plexacious:', () => {
   describe('Event attaching:', () => {

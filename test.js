@@ -1,3 +1,3 @@
-const Plexacious = require('./Plexacious');
-
-const plex = new Plexacious();
+const Plexacious = require('./lib/Plexacious');
+const config = require('./config');
+const plex = new Plexacious(config);
