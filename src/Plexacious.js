@@ -47,6 +47,8 @@ class Plexacious {
     }
 
     this._interval = setInterval(this._digest.bind(this), timer * 60000);
+
+    return this;
   }
 
   /**
