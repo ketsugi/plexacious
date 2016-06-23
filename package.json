@@ -33,6 +33,8 @@
     "babel-register": "^6.9.0",
     "chai": "^3.5.0",
     "fast-async": "^6.0.22",
+    "gulp": "^3.9.1",
+    "gulp-babel": "^6.1.2",
     "mocha": "^2.5.3",
     "mocha-clean": "^1.0.0"
   }
