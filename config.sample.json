@@ -1,9 +1,0 @@
-{
-  "hostname": "Plex server hostname",
-  "port": "Plex server port",
-  "https": "boolean",
-  "username": "plex.tv username",
-  "password": "plex.tv password",
-  "token": "Plex authentication token",
-  "refreshDuration": "Refresh duration in minutes"
-}
