@@ -4,6 +4,7 @@
   "description": "A library to facilitate talking to a Plex server via its web API.",
   "main": "Plexacious.js",
   "scripts": {
+    "postinstall": "npm configure",
     "test": "mocha --compilers js:babel-register",
     "test:watch": "mocha --compilers js:babel-register --watch"
   },
@@ -22,6 +23,9 @@
   },
   "homepage": "https://gitlab.com/ketsugi/plexacious#README",
   "dependencies": {
+    "inquirer": "^1.0.3",
+    "is-integerish": "^1.0.1",
+    "jsonfile": "^2.3.1",
     "plex-api": "^3.5.0"
   },
   "devDependencies": {
