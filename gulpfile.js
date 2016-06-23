@@ -11,7 +11,7 @@ gulp.task('babelify', () => {
 });
 
 gulp.task('watch', () => {
-  gulp.watch('babelify', [`${srcDir}/**/*.js`]);
+  gulp.watch(`${srcDir}/**/*.js`, ['babelify']);
 })
 
 gulp.task('default', ['babelify', 'watch']);
