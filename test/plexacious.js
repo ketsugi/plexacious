@@ -1,6 +1,12 @@
 const { expect } = require('chai');
-const config = require('../config');
 const Plexacious = require('../lib/Plexacious');
+const config = {
+  "hostname": "macedonia.ketsugi.com",
+  "port": 32400,
+  "https": false,
+  "token": "ppnWNMSaXoAk2Vs2eyKK",
+  "refreshDuration": 30
+};
 
 const plex = new Plexacious(config);
 
