@@ -1,7 +1,7 @@
 # plexacious
 [![Build Status](https://gitlab.com/ketsugi/plexacious/badges/master/build.svg)](https://gitlab.com/ketsugi/plexacious/builds/)
 
-A Plex notifier bot that can talk to different messaging platforms.
+A Plex bot library for integration with chat bots.
 
 ## Installation
 
