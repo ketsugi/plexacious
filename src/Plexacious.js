@@ -23,25 +23,11 @@ class Plexacious {
     this.digest();
   }
 
-  get sessions () {
-    return this.plex.query('/status/sessions').then(response => response._children);
-  }
-
-  get servers () {
-    return this.plex.query('/servers').then(response => response._children);
-  }
-
-  get onDeck () {
-    return this.plex.query('/library/onDeck').then(response => response._children);
-  }
-
-  get recentlyAdded () {
-    return this.plex.query('/library/recentlyAdded').then(response => response._children);
-  }
-
-  query (key) {
-    return this.plex.query(key).then(response => response._children);
-  }
+  /***********************
+  *                      *
+  * Public API functions *
+  *                      *
+  ***********************/
 
   /**
    * Bind or unbind a callback function to an event
@@ -78,8 +64,41 @@ class Plexacious {
     console.log('Looking for recently added media...');
     const recentlyAdded = await this.recentlyAdded;
     for (let item of recentlyAdded) {
-      const media = await this.query(item.key);
+      const media = await this._get(item.key);
     }
+  }
+
+  /*************************
+  *                        *
+  * Data Getters           *
+  * Convenience functions  *
+  *                        *
+  *************************/
+
+  get sessions () {
+    return this._get('/status/sessions');
+  }
+
+  get servers () {
+    return this._get('/servers');
+  }
+
+  get onDeck () {
+    return this._get('/library/onDeck');
+  }
+
+  get recentlyAdded () {
+    return this._get('/library/recentlyAdded');
+  }
+
+  /***********************
+  *                      *
+  * Internal functions   *
+  *                      *
+  ***********************/
+
+  _get (key) {
+    return this.plex.query(key).then(response => response._children);
   }
 }
 
