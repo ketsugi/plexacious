@@ -4,7 +4,7 @@ const jsonfile = require('jsonfile');
 const moment = require('moment');
 
 // Add a timestampped logger
-console.timestampLog = (...args) => {
+const log = (...args) => {
   console.log(`[${moment().format('HH:mm:ss.SS')}]`, args.join(' '));
 };
 
@@ -18,7 +18,7 @@ class Plexacious {
       https: config.https,
       token: config.token,
     };
-    console.timestampLog(`Instantiating Plex API object to ${options.https ? 'https' : 'http'}://${options.hostname}:${options.port}...`)
+    log(`Instantiating Plex API object to ${options.https ? 'https' : 'http'}://${options.hostname}:${options.port}...`)
     this.plex = new PlexAPI(options);
     this.hooks = {};
     this.cache = this._readCache();
@@ -94,13 +94,13 @@ class Plexacious {
    * If init is passed as true, (ie the first time the digest is run when the bot starts up), event hooks will not be triggered.
    */
   async _digest (init = false) {
-    console.timestampLog('Starting digest...');
+    log('Starting digest...');
 
     // Iterate through the recently added media in each section, and call the attached callback function (if any) on any media added since the last digest
     let recentlyAdded = [];
 
     for (let section of await this.getSections()) {
-      console.timestampLog(`Now looking in section #${section.key}: ${section.title}...`);
+      log(`Now looking in section #${section.key}: ${section.title}...`);
 
       for (let item of await this.getRecentlyAdded(section.key)) {
         if (!(item.ratingKey in this.cache.recentlyAdded)) { // Check if it's a new item that we haven't already seen
@@ -124,7 +124,7 @@ class Plexacious {
   *************************/
 
   query (uri) {
-    //console.timestampLog(`Getting data from ${uri}...`);
+    //log(`Getting data from ${uri}...`);
     return this.plex.query(uri).then(response => response._children);
   }
 
@@ -133,7 +133,7 @@ class Plexacious {
   }
 
   getSections () {
-    console.timestampLog('Looking for library sections');
+    log('Looking for library sections');
     return this.query('/library/sections');
   }
 
@@ -178,15 +178,15 @@ class Plexacious {
     };
     try {
       cache = jsonfile.readFileSync('cache.json');
-      console.timestampLog('Read successfully from cache file.')
+      log('Read successfully from cache file.')
     }
     catch (e) {
       switch(e.name) {
         case 'Error':
-          console.timestampLog('Cache file not found. Starting with empty cache.');
+          log('Cache file not found. Starting with empty cache.');
           break;
         case 'SyntaxError':
-          console.timestampLog('Error parsing cache file JSON. Starting with empty cache instead.')
+          log('Error parsing cache file JSON. Starting with empty cache instead.')
           break;
         default:
           console.error(e);
@@ -201,7 +201,7 @@ class Plexacious {
         throw err;
       }
       else {
-        console.timestampLog('Cache written to file.');
+        log('Cache written to file.');
       }
     });
   }
