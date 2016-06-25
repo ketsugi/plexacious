@@ -40,7 +40,7 @@ class Plexacious {
    *
    * @param {integer} timer - The time between digest() calls in minutes
    */
-  setRefreshDuration (timer) {
+  setRefreshDuration (timer = 15) {
     if (this._interval) {
       // Clear the existing intervalObject if present
       clearInterval(this._interval);
