@@ -14,7 +14,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+ssh://git@gitlab.com/ketsugi/plexacious.git"
+    "url": "git+ssh://git@github.com:ketsugi/plexacious.git"
   },
   "keywords": [
     "plex",
@@ -23,9 +23,9 @@
   "author": "Joel Pan",
   "license": "ISC",
   "bugs": {
-    "url": "https://gitlab.com/ketsugi/plexacious/issues"
+    "url": "https://github.com/ketsugi/plexacious/issues"
   },
-  "homepage": "https://gitlab.com/ketsugi/plexacious#README",
+  "homepage": "https://github.com/ketsugi/plexacious",
   "dependencies": {
     "inquirer": "^1.0.3",
     "is-integerish": "^1.0.1",
