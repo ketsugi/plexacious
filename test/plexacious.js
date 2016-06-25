@@ -1,11 +1,10 @@
 const { expect } = require('chai');
 const Plexacious = require('../lib/Plexacious');
 const config = {
-  "hostname": "macedonia.ketsugi.com",
-  "port": 32400,
-  "https": false,
-  "token": "ppnWNMSaXoAk2Vs2eyKK",
-  "refreshDuration": 30
+  "hostname": process.env.PLEX_SERVER_HOST,
+  "port": process.env.PLEX_SERVER_PORT,
+  "https": process.env.PLEX_SERVER_HTTPS,
+  "token": process.env.PLEX_AUTH_TOKEN
 };
 
 const plex = new Plexacious(config);
