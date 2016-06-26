@@ -23,9 +23,8 @@ class Plexacious {
     this.hooks = {};
     this.cache = this._readCache();
 
-    // Start the digest
-    this.setRefreshDuration(config.refreshDuration);
-    this._digest(true);
+    // Call the init function after a short delay to give time for event callbacks to be attached
+    setTimeout(this._init.bind(this), 100);
   }
 
   /***********************
@@ -165,6 +164,15 @@ class Plexacious {
   * Internal functions   *
   *                      *
   ***********************/
+
+  _init() {
+    // Start the digest
+    this.setRefreshDuration(this.config.refreshDuration);
+
+    this._callEventHook('init');
+    this._digest(true);
+  }
+
 
   _getFullUri (uri) {
     return `${this.config.https ? 'https' : 'http'}://${this.config.hostname}:${this.config.port}/${uri}`;
