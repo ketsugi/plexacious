@@ -1,4 +1,5 @@
 # plexacious
+[![npm version](https://badge.fury.io/js/plexacious.svg)](https://badge.fury.io/js/plexacious)
 
 A Plex bot library for integration with chat bots.
 
@@ -12,7 +13,7 @@ npm run configure
 ## Usage
 
 ### Initialize
-```Javascript
+```js
 const Plexacious = require('plexacious');
 const config = require('./config');
 
@@ -35,7 +36,7 @@ Returns the Plexacious object instance for method chaining.
 
 ##### Example:
 
-```Javascript
+```js
 bot.setRefreshDuration(30);
 ```
 
@@ -53,7 +54,7 @@ Attach or detach a callback function to an event
 Returns the Plexacious object instance for method chaining.
 
 ##### Example:
-```Javascript
+```js
 bot.on('mediaAdded', (media) => console.log(media.title));
 ```
 
@@ -70,11 +71,11 @@ Performs a GET action on the provided path on the Plex server, and returns the o
 A Promise that resolves to an array of objects
 
 ##### Example:
-```Javascript
+```js
 let library = await bot.query('/library');
 ```
 
-```Javascript
+```js
 bot.query('/library').then(things => {
   console.dir(things);
 });
@@ -87,7 +88,7 @@ bot.query('/library').then(things => {
 Called when the bot instantiates, just before calling the digest function for the first time.
 
 ##### Example:
-```Javascript
+```js
 bot.on('init', () => console.log('Bot startup'));
 ```
 
@@ -96,6 +97,6 @@ bot.on('init', () => console.log('Bot startup'));
 Called when a new piece of media has been discovered in Plex's "Recently Added" section. Takes the media object as an argument.
 
 ##### Example:
-```Javascript
+```js
 bot.on('mediaAdded', (media) => console.log(media.title));
 ```
