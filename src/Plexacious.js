@@ -55,13 +55,15 @@ class Plexacious {
    * @param {string} event - The event to which to bind or unbind the callback function
    * @param {function} callback - The callback function to be called when the event occurs. If not provided, any existing callback function for the specified event will be removed.
    */
-  on (event, callback) {
-    if (event) {
+  on (eventName, callback) {
+    if (eventName) {
       if (callback) {
-        this.hooks[event] = callback;
+        console.log(`Attaching callback to event '${eventName}'`);
+        this.hooks[eventName] = callback;
       }
-      else if (this.hooks[event]){
-        delete this.hooks[event];
+      else if (this.hooks[eventName]){
+        console.log(`Removing callback from event '${eventName}'`);
+        delete this.hooks[eventName];
       }
     }
 
@@ -104,7 +106,7 @@ class Plexacious {
       for (let item of await this.getRecentlyAdded(section.key)) {
         if (!(item.ratingKey in this.cache.recentlyAdded)) { // Check if it's a new item that we haven't already seen
           if (!init && this.hooks['mediaAdded']) { // Check if there's a callback attached
-            this.hooks['mediaAdded'](item);
+            this._callEventHook('mediaAdded', item);
           }
         }
 
@@ -173,6 +175,12 @@ class Plexacious {
     this._digest(true);
   }
 
+  _callEventHook(eventName, ...args) {
+    console.log(`Calling function on event '${eventName}''`);
+    if (this.hooks[eventName]) {
+      this.hooks[eventName].apply(args);
+    }
+  }
 
   _getFullUri (uri) {
     return `${this.config.https ? 'https' : 'http'}://${this.config.hostname}:${this.config.port}/${uri}`;
