@@ -47,7 +47,7 @@ Attach or detach a callback function to an event
 
 ##### Parameters:
 - `{string} event`: The event to which to attach or from which to detach the callback function.
-- `{function} callback`: The callback function to attach to the event. If not provided, the existing callback function on this event will be detached, if any.
+- `{function} callback`: (*optional*) The callback function to attach to the event. If not provided, the existing callback function on this event will be detached, if any.
 
 ##### Return:
 Returns the Plexacious object instance for method chaining.
@@ -82,6 +82,20 @@ bot.query('/library').then(things => {
 
 ### Events
 
-#### mediaAdded
+#### `init`
 
-Called when a new piece of media has been discovered in Plex's "Recently Added" section
+Called when the bot instantiates, just before calling the digest function for the first time.
+
+##### Example:
+```Javascript
+bot.on('init', () => console.log('Bot startup'));
+```
+
+#### `mediaAdded`
+
+Called when a new piece of media has been discovered in Plex's "Recently Added" section. Takes the media object as an argument.
+
+##### Example:
+```Javascript
+bot.on('mediaAdded', (media) => console.log(media.title));
+```
