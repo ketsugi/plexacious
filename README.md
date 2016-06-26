@@ -1,5 +1,5 @@
 # plexacious
-[![npm version](https://badge.fury.io/js/plexacious.svg)](https://badge.fury.io/js/plexacious)
+[![npm version](https://badge.fury.io/js/plexacious.svg)](https://badge.fury.io/js/plexacious) [![Known Vulnerabilities](https://snyk.io/test/github/ketsugi/plexacious/badge.svg)](https://snyk.io/test/github/ketsugi/plexacious)
 
 A Plex bot library for integration with chat bots.
 
