@@ -3,9 +3,5 @@ const config = require('./config');
 const plex = new Plexacious(config);
 
 plex
-  .on('init', () => {
-    console.log('Init');
-  })
-  .on('mediaAdded', media => {
-    console.log('Media', media.title);
-  });
+  .on('newMedia', media => console.log('Media', media.title))
+  .init(config);

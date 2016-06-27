@@ -17,12 +17,15 @@ class Plexacious {
     this.cache = this._readCache();
     this._eventEmitter = new EventEmitter();
 
-    this._eventEmitter.on('removeListener', (event, listener) => {
-      console.log(`Listener removed from event '${event}'`);
-    });
-    this._eventEmitter.on('newListener', (event, listener) => {
-      console.log(`Listener added to event '${event}'`);
-    });
+    // Declare default listeners for logging purposes
+    this
+      .on('newListener', (event, listener) => console.log(`Listener added to event '${event}'`))
+      .on('removeListener', (event, listener) => console.log(`Listener removed from event '${event}'`))
+      .on('init', config => console.log(`Instantiating Plex API object to ${this.config.https ? 'https' : 'http'}://${this.config.hostname}:${this.config.port}...`))
+      .on('query', uri => console.log(`Getting data from ${uri}`))
+      .on('queryComplete', uri => console.log(`Finished getting data from ${uri}`))
+      .on('startDigest', () => console.log('Starting digest...'))
+      .on('endDigest', () => console.log('Digest complete.'));
   }
 
   /***********************
@@ -52,9 +55,7 @@ class Plexacious {
       refreshDuration: config.refreshDuration || SERVER_DEFAULT.refreshDuration,
     }
 
-    this.eventEmitter.once('init');
-
-    console.log(`Instantiating Plex API object to ${this.config.https ? 'https' : 'http'}://${this.config.hostname}:${this.config.port}...`);
+    this._eventEmitter.emit('init', config);
     this.plex = new PlexAPI(this.config);
 
     this.setRefreshDuration(this.config.refreshDuration);
@@ -76,7 +77,7 @@ class Plexacious {
     }
 
     this._intervalObj = setInterval(this._digest.bind(this), timer * 60000);
-    setImmediate(this._digest.bind(this));
+    this._digest();
 
     return this;
   }
@@ -116,26 +117,28 @@ class Plexacious {
    * If init is passed as true, (ie the first time the digest is run when the bot starts up), event hooks will not be triggered.
    */
   async _digest (init = false) {
-    console.log('Starting digest...');
+    this._eventEmitter.emit('startDigest');
 
     // Iterate through the recently added media in each section, and call the attached callback function (if any) on any media added since the last digest
     let recentlyAdded = [];
 
-    for (let section of await this.getSections()) {
-      console.log(`Now looking in section #${section.key}: ${section.title}...`);
-
-      for (let item of await this.getRecentlyAdded(section.key)) {
+    (await this.getSections()).forEach(async (section) => {
+      (await this.getRecentlyAdded(section.key)).forEach(item => {
+        console.log(item.title);
         if (!(item.ratingKey in this.cache.recentlyAdded)) { // Check if it's a new item that we haven't already seen
-          if (!init && this.hooks['mediaAdded']) { // Check if there's a callback attached
-            this.emit('newMedia', item);
+          if (!init) {
+            this._eventEmitter.emit('newMedia', item);
           }
         }
 
         this.cache.recentlyAdded[item.ratingKey] = item;
-      }
-    }
-    // Write cache to file
-    this._writeCache();
+      });
+
+      // Write cache to file
+      this._writeCache();
+    });
+
+    this._eventEmitter.emit('endDigest');
   }
 
   /*************************
@@ -146,8 +149,11 @@ class Plexacious {
   *************************/
 
   query (uri) {
-    //console.log(`Getting data from ${uri}...`);
-    return this.plex.query(uri).then(response => response._children);
+    this._eventEmitter.emit('query', uri);
+    return this.plex.query(uri).then(response => {
+      this._eventEmitter.emit('queryComplete', uri);
+      return response._children;
+    });
   }
 
   getImage (uri) {
@@ -155,7 +161,6 @@ class Plexacious {
   }
 
   getSections () {
-    console.log('Looking for library sections');
     return this.query('/library/sections');
   }
 
