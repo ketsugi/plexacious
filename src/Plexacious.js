@@ -19,9 +19,9 @@ class Plexacious {
 
     // Declare default listeners for logging purposes
     this
-      .on('newListener', (event, listener) => console.log(`Listener added to event '${event}'`))
-      .on('removeListener', (event, listener) => console.log(`Listener removed from event '${event}'`))
-      .on('init', config => console.log(`Instantiating Plex API object to ${this.config.https ? 'https' : 'http'}://${this.config.hostname}:${this.config.port}...`))
+      .on('newListener', (event) => console.log(`Listener added to event '${event}'`))
+      .on('removeListener', (event) => console.log(`Listener removed from event '${event}'`))
+      .on('init', config => console.log(`Instantiating Plex API object to ${config.https ? 'https' : 'http'}://${config.hostname}:${config.port}...`))
       .on('query', uri => console.log(`Getting data from ${uri}`))
       .on('queryComplete', uri => console.log(`Finished getting data from ${uri}`))
       .on('startDigest', () => console.log('Starting digest...'))
