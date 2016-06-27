@@ -22,10 +22,12 @@ class Plexacious {
       .on('newListener', (event) => console.log(`Listener added to event '${event}'`))
       .on('removeListener', (event) => console.log(`Listener removed from event '${event}'`))
       .on('init', config => console.log(`Instantiating Plex API object to ${config.https ? 'https' : 'http'}://${config.hostname}:${config.port}...`))
-      .on('query', uri => console.log(`Getting data from ${uri}`))
-      .on('queryComplete', uri => console.log(`Finished getting data from ${uri}`))
+      .on('startQuery', uri => console.log(`Getting data from ${uri}`))
+      .on('endQuery', uri => console.log(`Finished getting data from ${uri}`))
       .on('startDigest', () => console.log('Starting digest...'))
-      .on('endDigest', () => console.log('Digest complete.'));
+      .on('endDigest', () => console.log('Digest complete.'))
+      .on('newSession', session => console.log('Session', `${session.user.title} has started watching ${session.title} on ${session.player.title}`))
+      .on('endSession', session => console.log('Session', `${session.user.title} has stopped watching ${session.title}`));
   }
 
   /***********************
@@ -119,7 +121,7 @@ class Plexacious {
   _digest () {
     this._eventEmitter.emit('startDigest');
 
-    Promise.all([this._processSections()])
+    Promise.all([this._processSessions(), this._processSections()])
       .then(() => {
         this._init = false;
         this._writeCache();
@@ -136,9 +138,9 @@ class Plexacious {
   *************************/
 
   query (uri) {
-    this._eventEmitter.emit('query', uri);
+    this._eventEmitter.emit('startQuery', uri);
     return this.plex.query(uri).then(response => {
-      this._eventEmitter.emit('queryComplete', uri);
+      this._eventEmitter.emit('endQuery', uri);
       return response._children;
     });
   }
@@ -220,15 +222,55 @@ class Plexacious {
     });
   }
 
-  _processSections() {
+  _getChild (container, typeName) {
+    for (let i in container._children) {
+      if (container._children[i]._elementType === typeName) {
+        return container._children[i];
+      }
+    }
+  }
+
+  _processSessions () {
+    return this.getSessions().then(sessions => {
+      let previousSessions = this.cache.sessions;
+      this.cache.sessions = {};
+
+      sessions.forEach(session => {
+        session.user = this._getChild(session, 'User');
+        session.player = this._getChild(session, 'Player');
+        session.transcode = this._getChild(session, 'TranscodeSession');
+        const sessionKey = `session:${session.transcode.key}`;
+        if (!this._init && !(sessionKey in this.cache.sessions)) {
+          this._eventEmitter.emit('newSession', session);
+        }
+        this.cache.sessions[sessionKey] = session;
+      });
+
+      console.debug('Previous sessions', Object.keys(previousSessions));
+      console.debug('Current sessions', Object.keys(this.cache.sessions));
+
+      if (!this._init) {
+        for (let key in previousSessions) {
+          if (!(key in this.cache.sessions)) {
+            this._eventEmitter.emit('endSession', previousSessions[key]);
+            delete previousSessions[key];
+          }
+        }
+      }
+
+      return sessions;
+    });
+  }
+
+  _processSections () {
     return this.getSections().then(sections => {
       return Promise.all(sections.map(section => {
         return this.getRecentlyAdded(section.key).then(media => {
           return Promise.all(media.map(item => {
-            this.cache.recentlyAdded[item.ratingKey] = item;
             if (!this._init && !(item.ratingKey in this.cache.recentlyAdded)) { // Check if it's a new item that we haven't already seen
               this._eventEmitter.emit('newMedia', item);
             }
+            this.cache.recentlyAdded[item.ratingKey] = item;
           }));
         })
       }));

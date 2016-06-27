@@ -130,6 +130,14 @@ Called every time the digest starts, before any calls to the Plex API are made.
 
 Called every time the digest ends, after all API calls.
 
+#### `newSession`
+
+Called when a new streaming session is detected. Takes the session object as an argument.
+
+#### `endSession`
+
+Called when a streaming session is detected to have ended. Takes the session object as an argument.
+
 #### `newMedia`
 
 Called when a new piece of media has been discovered in Plex's "Recently Added" section. Takes the media object as an argument.
