@@ -9,8 +9,8 @@
     "configure": "node lib/configure",
     "postinstall": "npm run build",
     "pretest": "npm run build",
-    "test": "node node_modules/mocha/bin/mocha --compilers js:babel-register",
-    "test:watch": "node node_modules/mocha/bin/mocha --compilers js:babel-register --watch"
+    "test": "node node_modules/mocha/bin/mocha",
+    "test:watch": "node node_modules/mocha/bin/mocha --watch"
   },
   "repository": {
     "type": "git",
