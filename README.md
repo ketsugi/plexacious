@@ -1,5 +1,7 @@
 # plexacious
-[![npm version](https://badge.fury.io/js/plexacious.svg)](https://badge.fury.io/js/plexacious) [![Known Vulnerabilities](https://snyk.io/test/github/ketsugi/plexacious/badge.svg)](https://snyk.io/test/github/ketsugi/plexacious)
+[![npm version](https://badge.fury.io/js/plexacious.svg)](https://badge.fury.io/js/plexacious)
+[![Build Status](https://travis-ci.org/ketsugi/plexacious.svg?branch=master)](https://travis-ci.org/ketsugi/plexacious)
+[![Known Vulnerabilities](https://snyk.io/test/github/ketsugi/plexacious/badge.svg)](https://snyk.io/test/github/ketsugi/plexacious)
 
 A Plex bot library for integration with chat bots.
 
