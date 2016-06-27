@@ -3,6 +3,9 @@
 
 A Plex bot library for integration with chat bots.
 
+## :warning: Warning
+_This package should be consider *unstable*. APIs may change between 0.x releases as I continue to work on it._
+
 ## Installation
 
 ```

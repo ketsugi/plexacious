@@ -1,6 +1,6 @@
 {
   "name": "plexacious",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "description": "A library to facilitate talking to a Plex server via its web API.",
   "main": "Plexacious.js",
   "scripts": {
