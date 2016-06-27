@@ -222,14 +222,14 @@ class Plexacious {
 
   _processSections() {
     return this.getSections().then(sections => {
-      return Promise.all(sections.map((section) => {
+      return Promise.all(sections.map(section => {
         return this.getRecentlyAdded(section.key).then(media => {
-          return Promise.all(media.map((item => {
+          return Promise.all(media.map(item => {
             this.cache.recentlyAdded[item.ratingKey] = item;
             if (!this._init && !(item.ratingKey in this.cache.recentlyAdded)) { // Check if it's a new item that we haven't already seen
               this._eventEmitter.emit('newMedia', item);
             }
-          })));
+          }));
         })
       }));
     });
