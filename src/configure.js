@@ -165,7 +165,7 @@ function getAuthToken (username, password) {
         'Accepts': 'application/json',
         'X-Plex-Client-Identifier': 'Plexacious Bot',
         'X-Plex-Product': 'Plexacious',
-        'X-Plex-Version': npmConfig.version
+        'X-Plex-Version': npmConfig.version,
       },
     };
 
