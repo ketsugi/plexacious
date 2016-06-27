@@ -41,7 +41,6 @@
     "gulp": "^3.9.1",
     "gulp-babel": "^6.1.2",
     "mocha": "^2.5.3",
-    "mocha-clean": "^1.0.0",
-    "node-env-file": "^0.1.8"
+    "mocha-clean": "^1.0.0"
   }
 }
