@@ -4,7 +4,7 @@
   "description": "A library to facilitate talking to a Plex server via its web API.",
   "main": "Plexacious.js",
   "scripts": {
-    "build": "node node_modules/gulp/bin/gulp babelify",
+    "build": "node node_modules/gulp/bin/gulp lint",
     "build:watch": "node node_modules/gulp/bin/gulp",
     "configure": "node lib/configure",
     "postinstall": "npm run build",
