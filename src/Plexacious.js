@@ -116,29 +116,15 @@ class Plexacious {
    *
    * If init is passed as true, (ie the first time the digest is run when the bot starts up), event hooks will not be triggered.
    */
-  async _digest (init = false) {
+  _digest (init = false) {
     this._eventEmitter.emit('startDigest');
 
-    // Iterate through the recently added media in each section, and call the attached callback function (if any) on any media added since the last digest
-    let recentlyAdded = [];
-
-    (await this.getSections()).forEach(async (section) => {
-      (await this.getRecentlyAdded(section.key)).forEach(item => {
-        console.log(item.title);
-        if (!(item.ratingKey in this.cache.recentlyAdded)) { // Check if it's a new item that we haven't already seen
-          if (!init) {
-            this._eventEmitter.emit('newMedia', item);
-          }
-        }
-
-        this.cache.recentlyAdded[item.ratingKey] = item;
-      });
-
-      // Write cache to file
-      this._writeCache();
-    });
-
-    this._eventEmitter.emit('endDigest');
+    Promise.all([this._processSections(init)])
+      .then(() => {
+        this._writeCache();
+        this._eventEmitter.emit('endDigest');
+      })
+      .catch(console.error.bind(console));
   }
 
   /*************************
@@ -230,6 +216,21 @@ class Plexacious {
       else {
         console.log('Cache written to file.');
       }
+    });
+  }
+
+  _processSections(init) {
+    return this.getSections().then(sections => {
+      return Promise.all(sections.map((section) => {
+        return this.getRecentlyAdded(section.key).then(media => {
+          return Promise.all(media.map((item => {
+            this.cache.recentlyAdded[item.ratingKey] = item;
+            if (!init && !(item.ratingKey in this.cache.recentlyAdded)) { // Check if it's a new item that we haven't already seen
+              this._eventEmitter.emit('newMedia', item);
+            }
+          })));
+        })
+      }));
     });
   }
 }
