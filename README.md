@@ -20,16 +20,41 @@ npm run configure
 const Plexacious = require('plexacious');
 const config = require('./config');
 
-const bot = new Plexacious(config); // Alternatively, construct your own config object and pass it in
+const bot = new Plexacious();
+
+bot.init(config) // Alternatively, construct your own config object and pass it in
 ```
 
 ### API
+
+### init
+
+`init(config)`
+
+Set up the Plex server information and start the digest timer.
+
+##### Parameters
+- `{Object} config`: The configuration settings for the Plex server connection.
+
+##### Return
+Returns the Plexacious object instance for method chaining.
+
+##### Example
+```js
+bot.init({
+  hostname: 'localhost',
+  port: 1234,
+  https: false,
+  token: 'abcdefg',
+  refreshDuration: 30,
+});
+```
 
 #### setRefreshDuration
 
 `setRefreshDuration(timer)`
 
-Clear the current digest timer and set a new interval timer for the digest process.
+Clear the current digest timer and set a new interval timer for the digest process. This will also cause the digest to run immediately (so that it's not possible to indefinitely delay the digest by constantly changing the timer).
 
 ##### Parameters:
 - `{integer} timer`: The desired interval between digest processes, in minutes.
