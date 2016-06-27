@@ -8,7 +8,7 @@ const EventEmitter = require('events');
 const SERVER_DEFAULT = {
   hostname: 'localhost',
   port: 32400,
-  https: false
+  https: false,
 }
 
 // Define the main class
