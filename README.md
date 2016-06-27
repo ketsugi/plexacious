@@ -120,11 +120,19 @@ Called when the bot instantiates, just before calling the digest function for th
 bot.on('init', () => console.log('Bot startup'));
 ```
 
-#### `mediaAdded`
+#### `startDigest`
+
+Called every time the digest starts, before any calls to the Plex API are made.
+
+#### `endDigest`
+
+Called every time the digest ends, after all API calls.
+
+#### `newMedia`
 
 Called when a new piece of media has been discovered in Plex's "Recently Added" section. Takes the media object as an argument.
 
 ##### Example:
 ```js
-bot.on('mediaAdded', (media) => console.log(media.title));
+bot.on('newMedia', (media) => console.log(media.title));
 ```
