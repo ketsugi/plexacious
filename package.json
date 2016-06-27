@@ -4,11 +4,7 @@
   "description": "A library to facilitate talking to a Plex server via its web API.",
   "main": "Plexacious.js",
   "scripts": {
-    "build": "node node_modules/gulp/bin/gulp lint",
-    "build:watch": "node node_modules/gulp/bin/gulp",
-    "configure": "node lib/configure",
-    "postinstall": "npm run build",
-    "pretest": "npm run build",
+    "configure": "node js/configure",
     "test": "node node_modules/mocha/bin/mocha",
     "test:watch": "node node_modules/mocha/bin/mocha --watch"
   },

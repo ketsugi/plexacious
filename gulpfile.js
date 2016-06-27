@@ -1,8 +1,7 @@
 const gulp = require('gulp');
 const eslint = require('gulp-eslint');
 
-const srcDir = './src';
-const buildDir = './lib';
+const srcDir = './js';
 
 gulp.task("lint", function () {
   return gulp.src(`${srcDir}/**/*.js`)
@@ -21,11 +20,10 @@ gulp.task("lint", function () {
         }
     }))
     .pipe(eslint.format())
-    .pipe(gulp.dest(buildDir));
 });
 
 gulp.task('watch', () => {
   gulp.watch(`${srcDir}/**/*.js`, ['lint']);
 });
 
-gulp.task('default', ['watch']);
+gulp.task('default', ['lint', 'watch']);
