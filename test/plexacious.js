@@ -1,15 +1,7 @@
 const { expect } = require('chai');
 const Plexacious = require('../lib/Plexacious');
-const env = require('node-env-file');
-env('./.env');
-const config = {
-  "hostname": process.env.PLEX_SERVER_HOST,
-  "port": process.env.PLEX_SERVER_PORT,
-  "https": process.env.PLEX_SERVER_HTTPS,
-  "token": process.env.PLEX_AUTH_TOKEN
-};
 
-const plex = new Plexacious(config);
+const plex = new Plexacious();
 
 describe('Plexacious:', () => {
   describe('Event attaching:', () => {
