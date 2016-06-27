@@ -2,6 +2,7 @@
 const PlexAPI = require('plex-api');
 const jsonfile = require('jsonfile');
 require('tinylog');
+const EventEmitter = require('events');
 
 // Add server defaults
 const SERVER_DEFAULT = {
@@ -13,8 +14,15 @@ const SERVER_DEFAULT = {
 // Define the main class
 class Plexacious {
   constructor() {
-    this.hooks = {};
     this.cache = this._readCache();
+    this._eventEmitter = new EventEmitter();
+
+    this._eventEmitter.on('removeListener', (event, listener) => {
+      console.log(`Listener removed from event '${event}'`);
+    });
+    this._eventEmitter.on('newListener', (event, listener) => {
+      console.log(`Listener added to event '${event}'`);
+    });
   }
 
   /***********************
@@ -44,7 +52,7 @@ class Plexacious {
       refreshDuration: config.refreshDuration || SERVER_DEFAULT.refreshDuration,
     }
 
-    this._callEventHook('init');
+    this.eventEmitter.once('init');
 
     console.log(`Instantiating Plex API object to ${this.config.https ? 'https' : 'http'}://${this.config.hostname}:${this.config.port}...`);
     this.plex = new PlexAPI(this.config);
@@ -84,27 +92,14 @@ class Plexacious {
   on (eventName, callback) {
     if (eventName) {
       if (callback) {
-        log(`Attaching callback to event '${eventName}'`);
-        this.hooks[eventName] = callback;
+        this._eventEmitter.on(eventName, callback);
       }
-      else if (this.hooks[eventName]){
-        log(`Removing callback from event '${eventName}'`);
-        delete this.hooks[eventName];
+      else {
+        this._eventEmitter.removeAllListeners(eventName);
       }
     }
 
     return this;
-  }
-
-  /**
-   * Return the callback functions that have been attached
-   *
-   * @param {string} event - If provided, specifies the event to get the callback function for. Will return undefined if this event has no callback attached.
-   * @return {Array|function}
-   */
-  eventFunctions (event) {
-    if (event) return this.hooks[event];
-    else return this.hooks;
   }
 
   /*************************
@@ -132,7 +127,7 @@ class Plexacious {
       for (let item of await this.getRecentlyAdded(section.key)) {
         if (!(item.ratingKey in this.cache.recentlyAdded)) { // Check if it's a new item that we haven't already seen
           if (!init && this.hooks['mediaAdded']) { // Check if there's a callback attached
-            this._callEventHook('mediaAdded', item);
+            this.emit('newMedia', item);
           }
         }
 
@@ -192,13 +187,6 @@ class Plexacious {
   * Internal functions   *
   *                      *
   ***********************/
-
-  _callEventHook(eventName, ...args) {
-    console.log(`Calling function on event '${eventName}''`);
-    if (this.hooks[eventName]) {
-      this.hooks[eventName].apply(args);
-    }
-  }
 
   _getFullUri (uri) {
     return `${this.config.https ? 'https' : 'http'}://${this.config.hostname}:${this.config.port}/${uri}`;

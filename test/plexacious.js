@@ -5,15 +5,14 @@ const plex = new Plexacious();
 
 describe('Plexacious:', () => {
   describe('Event attaching:', () => {
-    it('should instantiate with no events', () => {
-      expect(plex.eventFunctions()).to.deep.equal({});
-      expect(typeof plex.eventFunctions('test')).to.equal('undefined');
-    });
-
     it('should attach a callback to an event', () => {
       plex.on('test', () => {});
-      expect(Object.keys(plex.eventFunctions()).length).to.equal(1);
-      expect(typeof plex.eventFunctions('test')).to.equal('function');
+      expect(plex._eventEmitter.listenerCount('test')).to.equal(1);
+    });
+
+    it('should detach the callback if no function is passed', () => {
+      plex.on('test');
+      expect(plex._eventEmitter.listenerCount('test')).to.equal(0);
     });
   });
 
