@@ -21,7 +21,7 @@ gulp.task("lint", function () {
         }
     }))
     .pipe(eslint.format())
-    .pipe(eslint.failAfterError());
+    .pipe(gulp.dest(buildDir));
 });
 
 gulp.task('watch', () => {
