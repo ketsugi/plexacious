@@ -8,23 +8,18 @@ const log = (...args) => {
   console.log(`[${moment().format('HH:mm:ss.SS')}]`, args.join(' '));
 };
 
+// Add server defaults
+const SERVER_DEFAULT = {
+  hostname: 'localhost',
+  port: 32400,
+  https: false
+}
+
 // Define the main class
 class Plexacious {
-  constructor(config) {
-    this.config = config;
-    const options = {
-      hostname: config.hostname,
-      port: config.port,
-      https: config.https,
-      token: config.token,
-    };
-    log(`Instantiating Plex API object to ${options.https ? 'https' : 'http'}://${options.hostname}:${options.port}...`)
-    this.plex = new PlexAPI(options);
+  constructor() {
     this.hooks = {};
     this.cache = this._readCache();
-
-    // Call the init function after a short delay to give time for event callbacks to be attached
-    setTimeout(this._init.bind(this), 100);
   }
 
   /***********************
@@ -34,17 +29,51 @@ class Plexacious {
   ***********************/
 
   /**
-   * Modify the refresh duration (aka the digest timer)
-   *
-   * @param {integer} timer - The time between digest() calls in minutes
+   * Establish a connection to a specified Plex server
+   * 
+   * @param {Object} config - The Plex server
+   * @param {?string} config.hostname - The server host name (eg localhost, plex.server.com), defaults to 'localhost'
+   * @param {?number} config.port - The server port, defaults to 32400
+   * @param {?boolean} config.https - Set to true if HTTPS connection is required, defaults to false
+   * @param {token} config.token - The Plex Authentication token
+   * @param {?number} config.refreshDuration - The refresh timer in minutes, defaults to 15
+   * 
+   * @return {Plexacious} - Returns the Plexacious object itself for method chaining
    */
-  setRefreshDuration (timer = 15) {
-    if (this._interval) {
-      // Clear the existing intervalObject if present
-      clearInterval(this._interval);
+  init (config) {
+    this.config = {
+      hostname: config.hostname || SERVER_DEFAULT.hostname,
+      port: config.port || SERVER_DEFAULT.port,
+      https: config.https || SERVER_DEFAULT.https,
+      token: config.token,
+      refreshDuration: config.refreshDuration || SERVER_DEFAULT.refreshDuration,
     }
 
-    this._interval = setInterval(this._digest.bind(this), timer * 60000);
+    this._callEventHook('init');
+
+    log(`Instantiating Plex API object to ${this.config.https ? 'https' : 'http'}://${this.config.hostname}:${this.config.port}...`);
+    this.plex = new PlexAPI(this.config);
+
+    this.setRefreshDuration(this.config.refreshDuration);
+
+    return this;
+  }
+
+  /**
+   * Modify the refresh duration (aka the digest timer), and runs the digest function immediately
+   *
+   * @param {integer} timer - The time between digest() calls in minutes
+   * 
+   * @return {Plexacious} - Returns the Plexacious object itself for method chaining
+   */
+  setRefreshDuration (timer = 15) {
+    if (this._intervalObj) {
+      // Clear the existing intervalObject if present
+      clearInterval(this._intervalObj);
+    }
+
+    this._intervalObj = setInterval(this._digest.bind(this), timer * 60000);
+    setImmediate(this._digest.bind(this));
 
     return this;
   }
@@ -54,15 +83,17 @@ class Plexacious {
    *
    * @param {string} event - The event to which to bind or unbind the callback function
    * @param {function} callback - The callback function to be called when the event occurs. If not provided, any existing callback function for the specified event will be removed.
+   * 
+   * @return {Plexacious} - Returns the Plexacious object itself for method chaining
    */
   on (eventName, callback) {
     if (eventName) {
       if (callback) {
-        console.log(`Attaching callback to event '${eventName}'`);
+        log(`Attaching callback to event '${eventName}'`);
         this.hooks[eventName] = callback;
       }
       else if (this.hooks[eventName]){
-        console.log(`Removing callback from event '${eventName}'`);
+        log(`Removing callback from event '${eventName}'`);
         delete this.hooks[eventName];
       }
     }
@@ -166,14 +197,6 @@ class Plexacious {
   * Internal functions   *
   *                      *
   ***********************/
-
-  _init() {
-    // Start the digest
-    this.setRefreshDuration(this.config.refreshDuration);
-
-    this._callEventHook('init');
-    this._digest(true);
-  }
 
   _callEventHook(eventName, ...args) {
     console.log(`Calling function on event '${eventName}''`);
