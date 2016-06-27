@@ -55,6 +55,8 @@ class Plexacious {
       refreshDuration: config.refreshDuration || SERVER_DEFAULT.refreshDuration,
     }
 
+    this._init = true;
+
     this._eventEmitter.emit('init', config);
     this.plex = new PlexAPI(this.config);
 
@@ -113,14 +115,13 @@ class Plexacious {
    * The digest function which is run on an interval specified by the refreshDuration setting.
    *
    * It will check what's going on with the server periodically, pulling data from it and then calling the attached callback functions if any.
-   *
-   * If init is passed as true, (ie the first time the digest is run when the bot starts up), event hooks will not be triggered.
    */
-  _digest (init = false) {
+  _digest () {
     this._eventEmitter.emit('startDigest');
 
-    Promise.all([this._processSections(init)])
+    Promise.all([this._processSections()])
       .then(() => {
+        this._init = false;
         this._writeCache();
         this._eventEmitter.emit('endDigest');
       })
@@ -219,13 +220,13 @@ class Plexacious {
     });
   }
 
-  _processSections(init) {
+  _processSections() {
     return this.getSections().then(sections => {
       return Promise.all(sections.map((section) => {
         return this.getRecentlyAdded(section.key).then(media => {
           return Promise.all(media.map((item => {
             this.cache.recentlyAdded[item.ratingKey] = item;
-            if (!init && !(item.ratingKey in this.cache.recentlyAdded)) { // Check if it's a new item that we haven't already seen
+            if (!this._init && !(item.ratingKey in this.cache.recentlyAdded)) { // Check if it's a new item that we haven't already seen
               this._eventEmitter.emit('newMedia', item);
             }
           })));
