@@ -123,8 +123,11 @@ class Plexacious {
 
     Promise.all([this._processSessions(), this._processSections()])
       .then(() => {
+        // this._init is used to tell if this is the first time running the digest function. On the first time, event listeners are not called as the bot is gathering the initial data
         this._init = false;
         this._writeCache();
+        // Write all the data to cache
+        // Emit the final event
         this._eventEmitter.emit('endDigest');
       })
       .catch(console.error.bind(console));
