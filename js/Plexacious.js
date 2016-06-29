@@ -38,17 +38,18 @@ class Plexacious {
 
   /**
    * Establish a connection to a specified Plex server
-   * 
+   *
    * @param {Object} config - The Plex server
    * @param {?string} config.hostname - The server host name (eg localhost, plex.server.com), defaults to 'localhost'
    * @param {?number} config.port - The server port, defaults to 32400
    * @param {?boolean} config.https - Set to true if HTTPS connection is required, defaults to false
    * @param {token} config.token - The Plex Authentication token
    * @param {?number} config.refreshDuration - The refresh timer in minutes, defaults to 15
-   * 
+   * @param {?function} callback - The listener function to call when init is complete
+   *
    * @return {Plexacious} - Returns the Plexacious object itself for method chaining
    */
-  init (config) {
+  init (config, callback) {
     this.config = {
       hostname: config.hostname || SERVER_DEFAULT.hostname,
       port: config.port || SERVER_DEFAULT.port,
@@ -58,11 +59,13 @@ class Plexacious {
     }
 
     this._init = true;
-
-    this._eventEmitter.emit('init', config);
     this.plex = new PlexAPI(this.config);
-
     this.setRefreshDuration(this.config.refreshDuration);
+
+
+    if (callback && (typeof callback === 'function')) {
+      callback.bind(this).call();
+    }
 
     return this;
   }
@@ -71,7 +74,7 @@ class Plexacious {
    * Modify the refresh duration (aka the digest timer), and runs the digest function immediately
    *
    * @param {integer} timer - The time between digest() calls in minutes
-   * 
+   *
    * @return {Plexacious} - Returns the Plexacious object itself for method chaining
    */
   setRefreshDuration (timer = 15) {
@@ -91,7 +94,7 @@ class Plexacious {
    *
    * @param {string} event - The event to which to bind or unbind the callback function
    * @param {function} callback - The callback function to be called when the event occurs. If not provided, any existing callback function for the specified event will be removed.
-   * 
+   *
    * @return {Plexacious} - Returns the Plexacious object itself for method chaining
    */
   on (eventName, callback) {
