@@ -80,7 +80,7 @@ class Plexacious {
       clearInterval(this._intervalObj);
     }
 
-    this._intervalObj = setInterval(this._digest.bind(this), timer * 60000);
+    this.config.refreshDuration = timer;
     this._digest();
 
     return this;
@@ -136,6 +136,9 @@ class Plexacious {
 
         // Emit the final event
         this._eventEmitter.emit('endDigest');
+
+        // Schedule the next digest
+        this._intervalObj = setTimeout(this._digest.bind(this), this.config.refreshDuration * 60000);
       })
       .catch(console.error.bind(console));
   }
