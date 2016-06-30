@@ -1,9 +1,10 @@
 const gulp = require('gulp');
 const eslint = require('gulp-eslint');
+const mocha = require('gulp-mocha');
 
 const srcDir = './src';
 
-gulp.task("lint", function () {
+gulp.task('lint', () => {
   return gulp.src(`${srcDir}/**/*.js`)
     .pipe(eslint({
         extends: 'eslint:recommended',
@@ -22,8 +23,13 @@ gulp.task("lint", function () {
     .pipe(eslint.format())
 });
 
-gulp.task('watch', () => {
-  gulp.watch(`${srcDir}/**/*.js`, ['lint']);
+gulp.task('test', () => {
+  return gulp.src('test/**/*.js', {read: false})
+    .pipe(mocha({reporter: 'nyan'}))
 });
 
-gulp.task('default', ['lint', 'watch']);
+gulp.task('watch', () => {
+  gulp.watch(`${srcDir}/**/*.js`, ['lint', 'test']);
+});
+
+gulp.task('default', ['test', 'watch']);
