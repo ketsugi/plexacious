@@ -266,14 +266,11 @@ class Plexacious {
         session.player = this._getChild(session, 'Player');
         session.transcode = this._getChild(session, 'TranscodeSession');
         const sessionKey = `session:${session.transcode.key}`;
-        if (!this._init && !(sessionKey in this.cache.sessions)) {
+        if (!this._init && !(sessionKey in previousSessions)) {
           this._eventEmitter.emit('newSession', session);
         }
         this.cache.sessions[sessionKey] = session;
       });
-
-      console.log('Previous sessions', Object.keys(previousSessions));
-      console.log('Current sessions', Object.keys(this.cache.sessions));
 
       if (!this._init) {
         for (let key in previousSessions) {
