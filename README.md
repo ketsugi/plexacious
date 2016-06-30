@@ -53,6 +53,27 @@ bot.init({
 }, () => console.log('Bot initialized'));
 ```
 
+### start
+`start()`
+
+Start the bot. This will allow the bot to respond to commands and start the digest timer. If the bot is already stopped, this will do nothing.
+
+##### Return
+Returns the Plexacious object instance for method chaining.
+
+### stop
+`stop()`
+
+Stop the bot. This will clear any existing digest timer and prevent the bot from responding to commands (the only command that should work on a stopped bot is `start()`). If the bot is already stopped, this will do nothing.
+
+### exit
+`exit(exitCode)`
+
+Kills the bot's process completely.
+
+##### Parameters
+- `{number} exitCode`: (*optional*) The exit code with which to exit the process. Defaults to 0 if not provided.
+
 #### setRefreshDuration
 
 `setRefreshDuration(timer)`
