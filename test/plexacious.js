@@ -5,7 +5,8 @@ const config = {
   token: process.env.PLEX_AUTH_TOKEN
 }
 
-const plex = new Plexacious();
+let plex = new Plexacious();
+plex.setLogLevel('none');
 
 describe('Plexacious:', () => {
   describe('Environment:', () => {

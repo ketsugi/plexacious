@@ -4,5 +4,6 @@ config.refreshDuration = 1;
 const plex = new Plexacious(config);
 
 plex
+  .setLogLevel('debug')
   .on('newMedia', media => console.log('Media', media.title))
   .init(config);

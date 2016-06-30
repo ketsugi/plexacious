@@ -4,7 +4,16 @@ const clone = require('clone');
 const jsonfile = require('jsonfile');
 const isIntegerish = require('is-integerish');
 const EventEmitter = require('events');
-require('tinylog');
+const winston = require('winston');
+const logger = new (winston.Logger)({
+    transports: [
+      new (winston.transports.Console)({
+        colorize: true,
+        level: 'verbose',
+        timestamp: true,
+      })
+    ]
+});
 
 // Add server defaults
 const CONFIG_DEFAULT = {
@@ -29,34 +38,34 @@ class Plexacious extends EventEmitter {
     this._readCache()
       .then(fileCache => {
         this.cache = clone(fileCache);
-        console.log('Read cache successfully from file.');
+        logger.info('Read cache successfully from file.');
       })
       .catch(err => {
         switch(err.name) {
           case 'Error':
-            console.error('Cache file not found. Starting with empty cache.');
+            logger.warn('Cache file not found. Starting with empty cache.');
             break;
           case 'SyntaxError':
-            console.error('Error parsing cache file JSON. Starting with empty cache instead.');
+            logger.warn('Error parsing cache file JSON. Starting with empty cache instead.');
             break;
           default:
-            console.error(err);
+            logger.error(err);
         }
       });
 
     // Declare default listeners for logging purposes
     this
-      .on('newListener', (event) => console.log(`Listener added to event '${event}'`))
-      .on('removeListener', (event) => console.log(`Listener removed from event '${event}'`))
-      .on('startQuery', uri => console.log(`Getting data from ${uri}`))
-      .on('endQuery', uri => console.log(`Finished getting data from ${uri}`))
-      .on('start', () => console.log('Starting bot'))
-      .on('stop', () => console.log('Stopping bot'))
-      .on('exit', () => console.log('Killing bot'))
-      .on('startDigest', () => console.log('Starting digest...'))
-      .on('endDigest', () => console.log('Digest complete.'))
-      .on('newSession', session => console.log('Session', `${session.user.title} has started watching ${session.title} on ${session.player.title}`))
-      .on('endSession', session => console.log('Session', `${session.user.title} has stopped watching ${session.title}`));
+      .on('newListener', (event) => logger.debug(`Listener added to event '${event}'`))
+      .on('removeListener', (event) => logger.debug(`Listener removed from event '${event}'`))
+      .on('startQuery', uri => logger.debug(`Getting data from ${uri}`))
+      .on('endQuery', uri => logger.debug(`Finished getting data from ${uri}`))
+      .on('start', () => logger.info('Starting bot'))
+      .on('stop', () => logger.info('Stopping bot'))
+      .on('exit', () => logger.info('Killing bot'))
+      .on('startDigest', () => logger.info('Starting digest...'))
+      .on('endDigest', () => logger.info('Digest complete.'))
+      .on('newSession', session => logger.info('Session', `${session.user.title} has started watching ${session.title} on ${session.player.title}`))
+      .on('endSession', session => logger.info('Session', `${session.user.title} has stopped watching ${session.title}`));
   }
 
   /***********************
@@ -64,6 +73,19 @@ class Plexacious extends EventEmitter {
   * Public API functions *
   *                      *
   ***********************/
+
+  /**
+   * Set log level
+   *
+   * @param {string|number} level: Log Level (Values: 'error', 'warn', 'info', 'verbose', 'debug', 'silly')
+   *
+   * @return {Plexacious}
+   */
+  setLogLevel (level = 'info') {
+    logger.level = level;
+
+    return this;
+  }
 
   /**
    * Establish a connection to a specified Plex server
@@ -80,7 +102,7 @@ class Plexacious extends EventEmitter {
    */
   init (config, callback) {
     if (!config.token) {
-      console.error('You must provide an authorization token to connect to the Plex server.');
+      logger.error('You must provide an authorization token to connect to the Plex server.');
       this.exit(-1);
     }
 
@@ -95,11 +117,11 @@ class Plexacious extends EventEmitter {
     this.running = false;
     this._init = true;
 
-    console.log(`Instantiating Plex API object to ${this.config.https ? 'https' : 'http'}://${this.config.hostname}:${this.config.port}...`);
+    logger.info(`Instantiating Plex API object to ${this.config.https ? 'https' : 'http'}://${this.config.hostname}:${this.config.port}...`);
     this.plex = new PlexAPI(this.config);
 
     // Test the connection
-    console.log('Testing the connection to the Plex server...');
+    logger.info('Testing the connection to the Plex server...');
     this.plex.query('/library')
       .then(() => {
         this.setRefreshDuration(this.config.refreshDuration);
@@ -109,7 +131,7 @@ class Plexacious extends EventEmitter {
         }
       })
       .catch((err) => {
-        console.error(err);
+        logger.error(err);
       });
 
     return this;
@@ -127,14 +149,16 @@ class Plexacious extends EventEmitter {
       timer = CONFIG_DEFAULT.refreshDuration;
     }
     else if (!isIntegerish(timer)) {
-      throw Error('Please provide a numeric value for timer');
+      logger.error('Please provide a numeric value for timer');
+      return;
     }
     else {
       timer = parseInt(timer, 10);
     }
 
     if (timer <= 0) {
-      throw Error('Timer should be at least 1 min or more');
+      logger.error('Timer should be at least 1 min or more');
+      return;
     }
 
     if (this._intervalObj) {
@@ -256,8 +280,8 @@ class Plexacious extends EventEmitter {
 
           // Write all the data to cache
           this._writeCache()
-            .then(() => console.log('Cache written to file.'))
-            .catch(err => console.error(err));
+            .then(() => logger.info('Cache written to file.'))
+            .catch(err => logger.error(err));
 
           // Emit the final event
           this.emit('endDigest');
@@ -267,7 +291,7 @@ class Plexacious extends EventEmitter {
             this._intervalObj = setTimeout(this._digest.bind(this), this.config.refreshDuration * 60000);
           }
         })
-        .catch(console.error.bind(console));
+        .catch(err => logger.error(err));
     }
   }
 
