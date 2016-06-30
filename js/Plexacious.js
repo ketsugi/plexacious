@@ -76,6 +76,11 @@ class Plexacious extends EventEmitter {
    * @return {Plexacious} - Returns the Plexacious object itself for method chaining
    */
   init (config, callback) {
+    if (!config.token) {
+      console.error('You must provide an authorization token to connect to the Plex server.');
+      this.exit(-1);
+    }
+
     this.config = {
       hostname: config.hostname || CONFIG_DEFAULT.hostname,
       port: config.port || CONFIG_DEFAULT.port,
