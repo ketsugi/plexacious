@@ -40,3 +40,4 @@ lib
 config.json
 cache.json
 .env
+test.js
