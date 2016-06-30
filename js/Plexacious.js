@@ -47,7 +47,6 @@ class Plexacious extends EventEmitter {
     this
       .on('newListener', (event) => console.log(`Listener added to event '${event}'`))
       .on('removeListener', (event) => console.log(`Listener removed from event '${event}'`))
-      .on('init', config => console.log(`Instantiating Plex API object to ${config.https ? 'https' : 'http'}://${config.hostname}:${config.port}...`))
       .on('startQuery', uri => console.log(`Getting data from ${uri}`))
       .on('endQuery', uri => console.log(`Finished getting data from ${uri}`))
       .on('startDigest', () => console.log('Starting digest...'))
@@ -85,6 +84,8 @@ class Plexacious extends EventEmitter {
     }
 
     this._init = true;
+
+    console.log(`Instantiating Plex API object to ${this.config.https ? 'https' : 'http'}://${this.config.hostname}:${this.config.port}...`);
     this.plex = new PlexAPI(this.config);
 
     // Test the connection
