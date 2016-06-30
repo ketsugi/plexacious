@@ -2,11 +2,11 @@
   "name": "plexacious",
   "version": "0.3.0",
   "description": "A library to facilitate talking to a Plex server via its web API.",
-  "main": "Plexacious.js",
+  "main": "src/Plexacious.js",
   "scripts": {
-    "configure": "node js/configure",
     "test": "node node_modules/mocha/bin/mocha",
     "test:watch": "node node_modules/mocha/bin/mocha --watch"
+    "configure": "node src/configure",
   },
   "repository": {
     "type": "git",

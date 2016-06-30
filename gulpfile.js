@@ -1,7 +1,7 @@
 const gulp = require('gulp');
 const eslint = require('gulp-eslint');
 
-const srcDir = './js';
+const srcDir = './src';
 
 gulp.task("lint", function () {
   return gulp.src(`${srcDir}/**/*.js`)

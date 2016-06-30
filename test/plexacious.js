@@ -1,5 +1,5 @@
 const { expect } = require('chai');
-const Plexacious = require('../js/Plexacious');
+const Plexacious = require('../src/Plexacious');
 
 const plex = new Plexacious();
 
