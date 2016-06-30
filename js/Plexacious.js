@@ -21,12 +21,15 @@ const BLANK_CACHE = {
 class Plexacious extends EventEmitter {
   constructor() {
     super();
+
+    // Initialize the cache
+    this.cache = Object.assign(BLANK_CACHE);
     this._readCache()
       .then(fileCache => {
         this.cache = Object.assign(fileCache);
+        console.log('Read cache successfully from file.');
       })
       .catch(err => {
-        this.cache = Object.assign(BLANK_CACHE);
         switch(err.name) {
           case 'Error':
             console.error('Cache file not found. Starting with empty cache.');
