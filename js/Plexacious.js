@@ -182,10 +182,19 @@ class Plexacious {
 
   query (uri) {
     this._eventEmitter.emit('startQuery', uri);
-    return this.plex.query(uri).then(response => {
-      this._eventEmitter.emit('endQuery', uri);
-      return response._children;
-    });
+    return this.plex.query(uri)
+      .then(response => {
+        this._eventEmitter.emit('endQuery', uri);
+        return response._children;
+      })
+      .catch(err => {
+        if (err.code === 'ECONNREFUSED') {
+          throw Error('Error connecting to Plex server');
+        }
+        else {
+          throw err;
+        }
+      });
   }
 
   getImage (uri) {
