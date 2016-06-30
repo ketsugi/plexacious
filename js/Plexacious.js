@@ -246,25 +246,29 @@ class Plexacious extends EventEmitter {
    * It will check what's going on with the server periodically, pulling data from it and then calling the attached callback functions if any.
    */
   _digest () {
-    this.emit('startDigest');
+    if (this.running) {
+      this.emit('startDigest');
 
-    Promise.all([this._processSessions(), this._processSections()])
-      .then(() => {
-        // this._init is used to tell if this is the first time running the digest function. On the first time, event listeners are not called as the bot is gathering the initial data
-        this._init = false;
+      Promise.all([this._processSessions(), this._processSections()])
+        .then(() => {
+          // this._init is used to tell if this is the first time running the digest function. On the first time, event listeners are not called as the bot is gathering the initial data
+          this._init = false;
 
-        // Write all the data to cache
-        this._writeCache()
-          .then(() => console.log('Cache written to file.'))
-          .catch(err => console.error(err));
+          // Write all the data to cache
+          this._writeCache()
+            .then(() => console.log('Cache written to file.'))
+            .catch(err => console.error(err));
 
-        // Emit the final event
-        this.emit('endDigest');
+          // Emit the final event
+          this.emit('endDigest');
 
-        // Schedule the next digest
-        this._intervalObj = setTimeout(this._digest.bind(this), this.config.refreshDuration * 60000);
-      })
-      .catch(console.error.bind(console));
+          // Schedule the next digest
+          if (this.running) {
+            this._intervalObj = setTimeout(this._digest.bind(this), this.config.refreshDuration * 60000);
+          }
+        })
+        .catch(console.error.bind(console));
+    }
   }
 
   /*************************
