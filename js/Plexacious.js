@@ -1,8 +1,8 @@
 // Import libraries
 const PlexAPI = require('plex-api');
 const jsonfile = require('jsonfile');
-require('tinylog');
 const EventEmitter = require('events');
+require('tinylog');
 
 // Add server defaults
 const SERVER_DEFAULT = {
