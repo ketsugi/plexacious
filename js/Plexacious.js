@@ -77,9 +77,6 @@ class Plexacious extends EventEmitter {
    */
   init (config, callback) {
     this.config = {
-      hostname: config.hostname || SERVER_DEFAULT.hostname,
-      port: config.port || SERVER_DEFAULT.port,
-      https: config.https || SERVER_DEFAULT.https,
       hostname: config.hostname || CONFIG_DEFAULT.hostname,
       port: config.port || CONFIG_DEFAULT.port,
       https: config.https || CONFIG_DEFAULT.https,
