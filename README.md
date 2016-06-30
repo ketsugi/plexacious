@@ -37,6 +37,7 @@ Set up the Plex server information and start the digest timer.
 
 ##### Parameters
 - `{Object} config`: The configuration settings for the Plex server connection.
+- `{function} callback`: (*optional*) The callback function which will be called when init is complete.
 
 ##### Return
 Returns the Plexacious object instance for method chaining.
@@ -49,7 +50,7 @@ bot.init({
   https: false,
   token: 'abcdefg',
   refreshDuration: 30,
-});
+}, () => console.log('Bot initialized'));
 ```
 
 #### setRefreshDuration
