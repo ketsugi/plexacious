@@ -35,9 +35,12 @@ class Plexacious extends EventEmitter {
 
     // Initialize the cache
     this.cache = clone(BLANK_CACHE);
+    this._init = true;
+
     this._readCache()
       .then(fileCache => {
         this.cache = clone(fileCache);
+        this._init = false;
         logger.info('Read cache successfully from file.');
       })
       .catch(err => {
@@ -115,7 +118,6 @@ class Plexacious extends EventEmitter {
     }
 
     this.running = false;
-    this._init = true;
 
     logger.info(`Instantiating Plex API object to ${this.config.https ? 'https' : 'http'}://${this.config.hostname}:${this.config.port}...`);
     this.plex = new PlexAPI(this.config);
