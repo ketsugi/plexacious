@@ -163,12 +163,13 @@ class Plexacious extends EventEmitter {
       return;
     }
 
-    if (this._intervalObj) {
-      // Clear the existing intervalObject if present
-      clearInterval(this._intervalObj);
+    if (this._timeoutObj) {
+      // Clear the existing timeoutObject if present
+      clearTimeout(this._timeoutObj);
     }
 
     this.config.refreshDuration = timer;
+    this._digest();
 
     return this;
   }
@@ -183,7 +184,6 @@ class Plexacious extends EventEmitter {
       this.emit('start');
       this.running = true;
       this.setRefreshDuration(this.config.refreshDuration);
-      this._digest();
     }
 
     return this;
