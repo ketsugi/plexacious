@@ -2,6 +2,7 @@
 const PlexAPI = require('plex-api');
 const clone = require('clone');
 const jsonfile = require('jsonfile');
+const isIntegerish = require('is-integerish');
 const EventEmitter = require('events');
 require('tinylog');
 
@@ -120,6 +121,13 @@ class Plexacious extends EventEmitter {
     if (!timer) {
       timer = CONFIG_DEFAULT.refreshDuration;
     }
+    else if (!isIntegerish(timer)) {
+      throw Error('Please provide a numeric value for timer');
+    }
+    else {
+      timer = parseInt(timer, 10);
+    }
+
     if (timer <= 0) {
       throw Error('Timer should be at least 1 min or more');
     }
