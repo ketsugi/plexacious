@@ -1,5 +1,6 @@
 // Import libraries
 const PlexAPI = require('plex-api');
+const clone = require('clone');
 const jsonfile = require('jsonfile');
 const EventEmitter = require('events');
 require('tinylog');
@@ -23,10 +24,10 @@ class Plexacious extends EventEmitter {
     super();
 
     // Initialize the cache
-    this.cache = Object.assign(BLANK_CACHE);
+    this.cache = clone(BLANK_CACHE);
     this._readCache()
       .then(fileCache => {
-        this.cache = Object.assign(fileCache);
+        this.cache = clone(fileCache);
         console.log('Read cache successfully from file.');
       })
       .catch(err => {

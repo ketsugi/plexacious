@@ -23,6 +23,7 @@
   },
   "homepage": "https://github.com/ketsugi/plexacious",
   "dependencies": {
+    "clone": "^1.0.2",
     "inquirer": "^1.0.3",
     "is-integerish": "^1.0.1",
     "jsonfile": "^2.3.1",
