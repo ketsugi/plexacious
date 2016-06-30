@@ -36,25 +36,7 @@ class Plexacious extends EventEmitter {
     // Initialize the cache
     this.cache = clone(BLANK_CACHE);
     this._init = true;
-
-    this._readCache()
-      .then(fileCache => {
-        this.cache = clone(fileCache);
-        this._init = false;
-        logger.info('Read cache successfully from file.');
-      })
-      .catch(err => {
-        switch(err.name) {
-          case 'Error':
-            logger.warn('Cache file not found. Starting with empty cache.');
-            break;
-          case 'SyntaxError':
-            logger.warn('Error parsing cache file JSON. Starting with empty cache instead.');
-            break;
-          default:
-            logger.error(err);
-        }
-      });
+    this.running = false;
 
     // Declare default listeners for logging purposes
     this
@@ -104,6 +86,7 @@ class Plexacious extends EventEmitter {
    * @return {Plexacious} - Returns the Plexacious object itself for method chaining
    */
   init (config, callback) {
+    // Check for auth token
     if (!config.token) {
       logger.error('You must provide an authorization token to connect to the Plex server.');
       this.exit(-1);
@@ -117,7 +100,25 @@ class Plexacious extends EventEmitter {
       refreshDuration: config.refreshDuration || CONFIG_DEFAULT.refreshDuration,
     }
 
-    this.running = false;
+    // Read the cache file into memory
+    this._readCache()
+      .then(fileCache => {
+        this.cache = clone(fileCache);
+        this._init = false;
+        logger.info('Read cache successfully from file.');
+      })
+      .catch(err => {
+        switch(err.name) {
+          case 'Error':
+            logger.warn('Cache file not found. Starting with empty cache.');
+            break;
+          case 'SyntaxError':
+            logger.warn('Error parsing cache file JSON. Starting with empty cache instead.');
+            break;
+          default:
+            logger.error(err);
+        }
+      });
 
     logger.info(`Instantiating Plex API object to ${this.config.https ? 'https' : 'http'}://${this.config.hostname}:${this.config.port}...`);
     this.plex = new PlexAPI(this.config);
