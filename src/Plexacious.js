@@ -9,11 +9,11 @@ const logger = new (winston.Logger)({
     transports: [
       new (winston.transports.Console)({
         colorize: true,
-        level: 'verbose',
         timestamp: true,
-      })
-    ]
+      }),
+    ],
 });
+logger.level = 'verbose';
 
 // Add server defaults
 const CONFIG_DEFAULT = {
