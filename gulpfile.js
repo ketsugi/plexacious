@@ -1,4 +1,5 @@
 const gulp = require('gulp');
+const gutil = require('gulp-util');
 const eslint = require('gulp-eslint');
 const mocha = require('gulp-mocha');
 
@@ -26,6 +27,7 @@ gulp.task('lint', () => {
 gulp.task('test', () => {
   return gulp.src('test/**/*.js', {read: false})
     .pipe(mocha({reporter: 'nyan'}))
+    .once('error', () => gutil.beep());
 });
 
 gulp.task('watch', () => {
