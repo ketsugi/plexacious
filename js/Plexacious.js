@@ -86,6 +86,7 @@ class Plexacious extends EventEmitter {
       refreshDuration: config.refreshDuration || CONFIG_DEFAULT.refreshDuration,
     }
 
+    this.running = false;
     this._init = true;
 
     console.log(`Instantiating Plex API object to ${this.config.https ? 'https' : 'http'}://${this.config.hostname}:${this.config.port}...`);
@@ -126,9 +127,48 @@ class Plexacious extends EventEmitter {
     }
 
     this.config.refreshDuration = timer;
-    this._digest();
 
     return this;
+  }
+
+  /**
+   * Start the bot. Only works if the bot is currently stopped.
+   *
+   * @return {Plexacious} - returns the Plexacious object iself for method chaining
+   */
+  start () {
+    if (!this.running) {
+      this.running = true;
+      this.setRefreshDuration(this.config.refreshDuration);
+      this._digest();
+      this.emit('start');
+    }
+
+    return this;
+  }
+
+  /**
+   * Stop the bot. Only works if the bot is currently running.
+   *
+   * @return {Plexacious} - returns the Plexacious object iself for method chaining
+   */
+  stop () {
+    if (this.running) {
+      this.running = false;
+      clearInterval(this._intervalObj);
+      this.emit('stop');
+    }
+
+    return this;
+  }
+
+  /**
+   * Completely shut down the bot and exit the process
+   */
+  exit (exitCode = 0) {
+    this.stop();
+    this.emit('exit');
+    process.exit(exitCode);
   }
 
   /**************************
