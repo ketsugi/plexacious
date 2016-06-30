@@ -207,10 +207,10 @@ class Plexacious extends EventEmitter {
   /**
    * Completely shut down the bot and exit the process
    */
-  exit (exitCode = 0) {
+  exit () {
     this.stop();
+    this.removeAllListeners();
     this.emit('exit');
-    process.exit(exitCode);
   }
 
   /**************************
