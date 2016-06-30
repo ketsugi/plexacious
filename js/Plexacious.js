@@ -65,7 +65,7 @@ class Plexacious {
    * @param {?string} config.hostname - The server host name (eg localhost, plex.server.com), defaults to 'localhost'
    * @param {?number} config.port - The server port, defaults to 32400
    * @param {?boolean} config.https - Set to true if HTTPS connection is required, defaults to false
-   * @param {token} config.token - The Plex Authentication token
+   * @param {string} config.token - The Plex Authentication token
    * @param {?number} config.refreshDuration - The refresh timer in minutes, defaults to 15
    * @param {?function} callback - The listener function to call when init is complete
    *
