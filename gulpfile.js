@@ -26,7 +26,7 @@ gulp.task('lint', () => {
 
 gulp.task('test', () => {
   return gulp.src('test/**/*.js', {read: false})
-    .pipe(mocha({reporter: 'nyan'}))
+    .pipe(mocha({reporter: 'progress'}))
     .once('error', () => gutil.beep());
 });
 
