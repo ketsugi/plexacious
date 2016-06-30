@@ -116,7 +116,10 @@ class Plexacious extends EventEmitter {
    *
    * @return {Plexacious} - Returns the Plexacious object itself for method chaining
    */
-  setRefreshDuration (timer = 15) {
+  setRefreshDuration (timer) {
+    if (!timer) {
+      timer = CONFIG_DEFAULT.refreshDuration;
+    }
     if (timer <= 0) {
       throw Error('Timer should be at least 1 min or more');
     }
