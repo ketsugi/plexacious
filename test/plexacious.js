@@ -8,4 +8,9 @@ const config = {
 const plex = new Plexacious();
 
 describe('Plexacious:', () => {
+  describe('Environment:', () => {
+    it('should read the environment variable correctly', () => {
+      expect(config.token).to.not.be.null;
+    });
+  });
 });
