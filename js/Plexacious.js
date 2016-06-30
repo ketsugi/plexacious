@@ -242,10 +242,10 @@ class Plexacious {
     return new Promise((resolve, reject) => {
       jsonfile.readFile('cache.json', (err, cacheData) => {
         if (err) {
-          reject(err);
+          return reject(err);
         }
         else {
-          resolve(cacheData);
+          return resolve(cacheData);
         }
       });
     });
@@ -255,10 +255,10 @@ class Plexacious {
     return new Promise((resolve, reject) => {
       jsonfile.writeFile('cache.json', this.cache, {spaces: 2}, err => {
         if (err) {
-          reject(err);
+          return reject(err);
         }
         else {
-          resolve();
+          return resolve();
         }
       });
     });
