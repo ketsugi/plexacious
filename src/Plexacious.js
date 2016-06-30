@@ -178,10 +178,10 @@ class Plexacious extends EventEmitter {
    */
   start () {
     if (!this.running) {
+      this.emit('start');
       this.running = true;
       this.setRefreshDuration(this.config.refreshDuration);
       this._digest();
-      this.emit('start');
     }
 
     return this;
