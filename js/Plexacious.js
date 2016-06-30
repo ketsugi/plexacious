@@ -18,8 +18,9 @@ const BLANK_CACHE = {
 };
 
 // Define the main class
-class Plexacious {
+class Plexacious extends EventEmitter {
   constructor() {
+    super();
     this._readCache()
       .then(fileCache => {
         this.cache = Object.assign(fileCache);
@@ -37,7 +38,6 @@ class Plexacious {
             console.error(err);
         }
       });
-    this._eventEmitter = new EventEmitter();
 
     // Declare default listeners for logging purposes
     this
@@ -119,23 +119,49 @@ class Plexacious {
     return this;
   }
 
+  /**************************
+  *                         *
+  * EVENT EMITTER FUNCTIONS *
+  *                         *
+  **************************/
+
   /**
-   * Bind or unbind a callback function to an event
+   * Attach a callback function to an event
    *
-   * @param {string} event - The event to which to bind or unbind the callback function
-   * @param {function} callback - The callback function to be called when the event occurs. If not provided, any existing callback function for the specified event will be removed.
+   * @param {string} event - The event to which to bind or unbind the callback function.
+   * @param {function} callback - The callback function to be called when the event occurs.
    *
    * @return {Plexacious} - Returns the Plexacious object itself for method chaining
    */
   on (eventName, callback) {
-    if (eventName) {
-      if (callback) {
-        this._eventEmitter.on(eventName, callback);
-      }
-      else {
-        this._eventEmitter.removeAllListeners(eventName);
-      }
-    }
+    super.on(eventName, callback);
+
+    return this;
+  }
+
+  /**
+   * Remove a specified callback function from an event
+   *
+   * @param {string} event - The event from which to remove callback functions.
+   * @param {function} callback - The listener to remove from the event.
+   *
+   * @return {Plexacious} - Returns the Plexacious object itself for method chaining
+   */
+  removeListener (eventName, callback) {
+    super.removeListener(eventName, callback);
+
+    return this;
+  }
+
+  /**
+   * Remove all callback functions from an event
+   *
+   * @param {string} event - The event from which to remove callback functions.
+   *
+   * @return {Plexacious} - Returns the Plexacious object itself for method chaining
+   */
+  removeAllListeners (eventName) {
+    super.removeAllListeners(eventName);
 
     return this;
   }
@@ -152,7 +178,7 @@ class Plexacious {
    * It will check what's going on with the server periodically, pulling data from it and then calling the attached callback functions if any.
    */
   _digest () {
-    this._eventEmitter.emit('startDigest');
+    this.emit('startDigest');
 
     Promise.all([this._processSessions(), this._processSections()])
       .then(() => {
@@ -165,7 +191,7 @@ class Plexacious {
           .catch(err => console.error(err));
 
         // Emit the final event
-        this._eventEmitter.emit('endDigest');
+        this.emit('endDigest');
 
         // Schedule the next digest
         this._intervalObj = setTimeout(this._digest.bind(this), this.config.refreshDuration * 60000);
@@ -181,10 +207,10 @@ class Plexacious {
   *************************/
 
   query (uri) {
-    this._eventEmitter.emit('startQuery', uri);
+    this.emit('startQuery', uri);
     return this.plex.query(uri)
       .then(response => {
-        this._eventEmitter.emit('endQuery', uri);
+        this.emit('endQuery', uri);
         return response._children;
       })
       .catch(err => {
@@ -284,7 +310,7 @@ class Plexacious {
         session.transcode = this._getChild(session, 'TranscodeSession');
         const sessionKey = `session:${session.transcode.key}`;
         if (!this._init && !(sessionKey in previousSessions)) {
-          this._eventEmitter.emit('newSession', session);
+          this.emit('newSession', session);
         }
         this.cache.sessions[sessionKey] = session;
       });
@@ -292,7 +318,7 @@ class Plexacious {
       if (!this._init) {
         for (let key in previousSessions) {
           if (!(key in this.cache.sessions)) {
-            this._eventEmitter.emit('endSession', previousSessions[key]);
+            this.emit('endSession', previousSessions[key]);
             delete previousSessions[key];
           }
         }
@@ -308,7 +334,7 @@ class Plexacious {
         return this.getRecentlyAdded(section.key).then(media => {
           return Promise.all(media.map(item => {
             if (!this._init && !(item.ratingKey in this.cache.recentlyAdded)) { // Check if it's a new item that we haven't already seen
-              this._eventEmitter.emit('newMedia', item);
+              this.emit('newMedia', item);
             }
             this.cache.recentlyAdded[item.ratingKey] = item;
           }));
