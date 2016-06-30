@@ -82,12 +82,20 @@ class Plexacious {
 
     this._init = true;
     this.plex = new PlexAPI(this.config);
-    this.setRefreshDuration(this.config.refreshDuration);
 
+    // Test the connection
+    console.log('Testing the connection to the Plex server...');
+    this.plex.query('/library')
+      .then(() => {
+        this.setRefreshDuration(this.config.refreshDuration);
 
-    if (callback && (typeof callback === 'function')) {
-      callback.bind(this).call();
-    }
+        if (callback && (typeof callback === 'function')) {
+          callback.bind(this).call();
+        }
+      })
+      .catch((err) => {
+        console.error(err);
+      });
 
     return this;
   }
