@@ -6,7 +6,7 @@ const EventEmitter = require('events');
 require('tinylog');
 
 // Add server defaults
-const SERVER_DEFAULT = {
+const CONFIG_DEFAULT = {
   hostname: 'localhost',
   port: 32400,
   https: false,
@@ -79,8 +79,11 @@ class Plexacious extends EventEmitter {
       hostname: config.hostname || SERVER_DEFAULT.hostname,
       port: config.port || SERVER_DEFAULT.port,
       https: config.https || SERVER_DEFAULT.https,
+      hostname: config.hostname || CONFIG_DEFAULT.hostname,
+      port: config.port || CONFIG_DEFAULT.port,
+      https: config.https || CONFIG_DEFAULT.https,
       token: config.token,
-      refreshDuration: config.refreshDuration || SERVER_DEFAULT.refreshDuration,
+      refreshDuration: config.refreshDuration || CONFIG_DEFAULT.refreshDuration,
     }
 
     this._init = true;
