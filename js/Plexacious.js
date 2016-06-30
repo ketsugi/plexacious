@@ -11,10 +11,32 @@ const SERVER_DEFAULT = {
   https: false,
 }
 
+const BLANK_CACHE = {
+  recentlyAdded: {},
+  servers: {},
+  sessions: {},
+};
+
 // Define the main class
 class Plexacious {
   constructor() {
-    this.cache = this._readCache();
+    this._readCache()
+      .then(fileCache => {
+        this.cache = Object.assign(fileCache);
+      })
+      .catch(err => {
+        this.cache = Object.assign(BLANK_CACHE);
+        switch(err.name) {
+          case 'Error':
+            console.error('Cache file not found. Starting with empty cache.');
+            break;
+          case 'SyntaxError':
+            console.error('Error parsing cache file JSON. Starting with empty cache instead.');
+            break;
+          default:
+            console.error(err);
+        }
+      });
     this._eventEmitter = new EventEmitter();
 
     // Declare default listeners for logging purposes
@@ -200,38 +222,26 @@ class Plexacious {
   }
 
   _readCache () {
-    let cache = {
-      recentlyAdded: {},
-      servers: {},
-      sessions: {},
-    };
-    try {
-      cache = jsonfile.readFileSync('cache.json');
-      console.log('Read successfully from cache file.')
-    }
-    catch (e) {
-      switch(e.name) {
-        case 'Error':
-          console.log('Cache file not found. Starting with empty cache.');
-          break;
-        case 'SyntaxError':
-          console.log('Error parsing cache file JSON. Starting with empty cache instead.')
-          break;
-        default:
-          console.error(e);
-      }
-    }
-    return cache;
+    return new Promise((resolve, reject) => {
+      jsonfile.readFile('cache.json', (err, cacheData) => {
+        if (err) {
+          reject(err);
+        }
+        else {
+          resolve(cacheData);
+        }
+      });
+    });
   }
 
   _writeCache () {
     return new Promise((resolve, reject) => {
       jsonfile.writeFile('cache.json', this.cache, {spaces: 2}, err => {
         if (err) {
-          return reject(err);
+          reject(err);
         }
         else {
-          return resolve();
+          resolve();
         }
       });
     });
