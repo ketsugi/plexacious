@@ -1,4 +1,5 @@
 const { expect } = require('chai');
+const fs = require('fs');
 const Plexacious = require('../src/Plexacious');
 const config = {
   hostname: 'macedonia.ketsugi.com',
@@ -9,9 +10,24 @@ let plex = new Plexacious();
 plex.setLogLevel('error');
 
 describe('Plexacious:', () => {
+  before('Delete cache file', () => {
+    const cacheFilePath = 'cache.json';
+    try {
+      fs.unlinkSync(cacheFilePath);
+    }
+    catch(err) {
+    }
+  });
+
   describe('Test Environment:', () => {
     it('should read the environment variable correctly', () => {
       expect(config.token).to.not.be.null;
+    });
+  });
+
+  describe('Initialization:', () => {
+    it('should return the Plexacious object', () => {
+      expect(plex.init(config)).to.equal(plex);
     });
   });
 
@@ -21,12 +37,6 @@ describe('Plexacious:', () => {
       expect(Object.keys(plex.cache.recentlyAdded).length).to.equal(0);
       expect(Object.keys(plex.cache.servers).length).to.equal(0);
       expect(Object.keys(plex.cache.sessions).length).to.equal(0);
-    });
-  });
-
-  describe('Initialization:', () => {
-    it('should return the Plexacious object', () => {
-      expect(plex.init(config)).to.equal(plex);
     });
   });
 
