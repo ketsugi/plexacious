@@ -262,8 +262,8 @@ class Plexacious {
         this.cache.sessions[sessionKey] = session;
       });
 
-      console.debug('Previous sessions', Object.keys(previousSessions));
-      console.debug('Current sessions', Object.keys(this.cache.sessions));
+      console.log('Previous sessions', Object.keys(previousSessions));
+      console.log('Current sessions', Object.keys(this.cache.sessions));
 
       if (!this._init) {
         for (let key in previousSessions) {
