@@ -28,7 +28,7 @@
     "is-integerish": "^1.0.1",
     "jsonfile": "^2.3.1",
     "plex-api": "^3.5.0",
-    "tinylog": "^0.1.1"
+    "winston": "^2.2.0"
   },
   "devDependencies": {
     "chai": "^3.5.0",
