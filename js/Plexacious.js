@@ -130,12 +130,9 @@ class Plexacious {
         this._init = false;
 
         // Write all the data to cache
-        try {
-          this._writeCache();
-        }
-        catch (e) {
-          throw Error (e);
-        }
+        this._writeCache()
+          .then(() => console.log('Cache written to file.'))
+          .catch(err => console.error(err));
 
         // Emit the final event
         this._eventEmitter.emit('endDigest');
@@ -228,14 +225,17 @@ class Plexacious {
   }
 
   _writeCache () {
-    jsonfile.writeFile('cache.json', this.cache, {spaces: 2}, err => {
-      if (err) {
-        throw err;
-      }
-      else {
-        console.log('Cache written to file.');
-      }
+    return new Promise((resolve, reject) => {
+      jsonfile.writeFile('cache.json', this.cache, {spaces: 2}, err => {
+        if (err) {
+          return reject(err);
+        }
+        else {
+          return resolve();
+        }
+      });
     });
+
   }
 
   _getChild (container, typeName) {
