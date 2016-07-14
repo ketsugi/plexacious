@@ -135,15 +135,6 @@ bot.query('/library').then(things => {
 
 ### Events
 
-#### `init`
-
-Called when the bot instantiates, just before calling the digest function for the first time.
-
-##### Example:
-```js
-bot.on('init', () => console.log('Bot startup'));
-```
-
 #### `startDigest`
 
 Called every time the digest starts, before any calls to the Plex API are made.
