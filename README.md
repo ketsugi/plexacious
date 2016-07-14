@@ -6,7 +6,7 @@
 A Plex bot library for integration with chat bots.
 
 ## :warning: Warning
-_This package should be consider *unstable*. APIs may change between 0.x releases as I continue to work on it._
+_This package should be considered *unstable*. APIs may change between 0.x releases as I continue to work on it._
 
 ## Installation
 
@@ -31,7 +31,7 @@ bot.init(config) // Alternatively, construct your own config object and pass it 
 
 ### init
 
-`init(config)`
+`init(config[, callback])`
 
 Set up the Plex server information and start the digest timer.
 
