@@ -121,25 +121,25 @@ inquirer.prompt(questions).then(answers => {
 
     getAuthToken(answers.username, answers.password).then(token => {
       answers.token = token;
-
-      currentConfig = {
-        hostname: answers.hostname,
-        port: answers.port,
-        https: answers.https,
-        token: answers.token,
-        refreshDuration: answers.refreshDuration,
-      };
-
-      jsonfile.writeFile('config.json', currentConfig, {spaces: 2}, err => {
-        if (err) {
-          throw err;
-        }
-        else {
-          console.log('Successfully saved to configuration file.');
-        }
-      });
     });
   }
+
+  currentConfig = {
+    hostname: answers.hostname,
+    port: answers.port,
+    https: answers.https,
+    token: answers.token,
+    refreshDuration: answers.refreshDuration,
+  };
+
+  jsonfile.writeFile('config.json', currentConfig, {spaces: 2}, err => {
+    if (err) {
+      throw err;
+    }
+    else {
+      console.log('Successfully saved to configuration file.');
+    }
+  });
 });
 
 /**
